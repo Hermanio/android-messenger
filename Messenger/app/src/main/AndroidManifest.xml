@@ -18,6 +18,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".LoginActivity"></activity>
+        <activity android:name=".ChatActivity"></activity>
+        <activity android:name=".CreateTopicActivity"></activity>
+        <activity android:name=".ProfileActivity"></activity>
+        <activity android:name=".ViewTopicActivity"></activity>
+        <activity android:name=".RegisterActivity"></activity>
     </application>
 
 </manifest>
