@@ -12,6 +12,28 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:text="Create topic view"
-        android:textSize="30sp"/>
+        android:textSize="30sp"
+        android:id="@+id/textView" />
+
+    <EditText
+        android:id="@+id/editText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="60dp"
+        android:ems="10"
+        android:hint="Topic name"
+        android:inputType="textPersonName"
+        android:text="Enter topic name" />
+
+    <Button
+        android:id="@+id/button_add_new_topic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/editText"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="23dp"
+        android:text="Add new topic" />
 
 </RelativeLayout>
