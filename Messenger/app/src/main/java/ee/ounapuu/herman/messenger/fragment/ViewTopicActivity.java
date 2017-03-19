@@ -12,10 +12,9 @@ import ee.ounapuu.herman.messenger.R;
  * Created by toks on 3/19/17.
  */
 
-public class FragmentOne extends Fragment{
-
-    public static FragmentOne newInstance() {
-        FragmentOne fragment = new FragmentOne();
+public class ViewTopicActivity extends Fragment {
+    public static ViewTopicActivity newInstance() {
+        ViewTopicActivity fragment = new ViewTopicActivity();
         return fragment;
     }
 
@@ -27,6 +26,6 @@ public class FragmentOne extends Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_item_one, container, false);
+        return inflater.inflate(R.layout.fragment_view_topic, container, false);
     }
 }

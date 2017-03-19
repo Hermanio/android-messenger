@@ -3,18 +3,15 @@ package ee.ounapuu.herman.messenger;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
-import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.TextView;
 
-import ee.ounapuu.herman.messenger.fragment.FragmentOne;
-import ee.ounapuu.herman.messenger.fragment.FragmentThree;
-import ee.ounapuu.herman.messenger.fragment.FragmentTwo;
+import ee.ounapuu.herman.messenger.fragment.ChatFragment;
+import ee.ounapuu.herman.messenger.fragment.ProfileView;
+import ee.ounapuu.herman.messenger.fragment.ViewTopicActivity;
+import ee.ounapuu.herman.messenger.fragment.CreateTopicFragment;
 
 
 public class MainActivity extends Activity {
@@ -31,14 +28,17 @@ public class MainActivity extends Activity {
                     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                         Fragment selectedFragment = null;
                         switch (item.getItemId()) {
-                            case R.id.navigation_dashboard:
-                                selectedFragment = FragmentOne.newInstance();
+                            case R.id.navigation_chat:
+                                selectedFragment = ChatFragment.newInstance();
                                 break;
-                            case R.id.navigation_home:
-                                selectedFragment = FragmentTwo.newInstance();
+                            case R.id.navigation_create_topic:
+                                selectedFragment = CreateTopicFragment.newInstance();
                                 break;
-                            case R.id.navigation_notifications:
-                                selectedFragment = FragmentThree.newInstance();
+                            case R.id.navigation_view_topic:
+                                selectedFragment = ViewTopicActivity.newInstance();
+                                break;
+                            case R.id.navigation_profile:
+                                selectedFragment = ProfileView.newInstance();
                                 break;
                         }
                         FragmentTransaction transaction = getFragmentManager().beginTransaction();
@@ -50,7 +50,7 @@ public class MainActivity extends Activity {
 
         //Manually displaying the first fragment - one time only
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        transaction.replace(R.id.frame_layout, FragmentTwo.newInstance());
+        transaction.replace(R.id.frame_layout, CreateTopicFragment.newInstance());
         transaction.commit();
 
         //Used to select an item programmatically
