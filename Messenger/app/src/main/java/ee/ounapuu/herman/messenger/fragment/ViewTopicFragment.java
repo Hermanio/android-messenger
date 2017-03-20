@@ -12,9 +12,9 @@ import ee.ounapuu.herman.messenger.R;
  * Created by toks on 3/19/17.
  */
 
-public class ViewTopicActivity extends Fragment {
-    public static ViewTopicActivity newInstance() {
-        ViewTopicActivity fragment = new ViewTopicActivity();
+public class ViewTopicFragment extends Fragment {
+    public static ViewTopicFragment newInstance() {
+        ViewTopicFragment fragment = new ViewTopicFragment();
         return fragment;
     }
 

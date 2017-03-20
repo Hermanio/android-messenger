@@ -4,48 +4,60 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="ee.ounapuu.herman.messenger.fragment.ProfileView">
+    tools:context="ee.ounapuu.herman.messenger.fragment.ProfileViewFragment">
 
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="53dp"
-        android:text="Username here"
-        android:textSize="30sp"
-        android:id="@+id/profileUsernameText" />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/profileImageView"
-        android:layout_width="180dp"
-        android:layout_height="180dp"
-        android:layout_below="@+id/profileUsernameText"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"
-        android:src="@drawable/ic_person_black_180dp_img_placeholder" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="53dp"
+                android:text="Username here"
+                android:textSize="30sp"
+                android:id="@+id/profileUsernameText" />
 
-    <Button
-        android:id="@+id/chooseImageFromCameraButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/profileImageView"
-        android:layout_alignStart="@+id/profileImageView"
-        android:layout_below="@+id/profileImageView"
-        android:layout_marginTop="29dp"
-        android:onClick="chooseImageFromCamera"
-        android:text="Choose image from camera" />
+            <ImageView
+                android:id="@+id/profileImageView"
+                android:layout_width="180dp"
+                android:layout_height="180dp"
+                android:layout_below="@+id/profileUsernameText"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="20dp"
+                android:src="@drawable/ic_person_black_180dp_img_placeholder" />
 
-    <Button
-        android:id="@+id/chooseImageFromGalleryButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/chooseImageFromCameraButton"
-        android:layout_alignStart="@+id/chooseImageFromCameraButton"
-        android:layout_below="@+id/chooseImageFromCameraButton"
-        android:layout_marginTop="28dp"
-        android:onClick="chooseImageFromGallery"
-        android:text="Choose image from gallery" />
+            <Button
+                android:id="@+id/chooseImageFromCameraButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignEnd="@+id/profileImageView"
+                android:layout_alignStart="@+id/profileImageView"
+                android:layout_below="@+id/profileImageView"
+                android:layout_marginTop="29dp"
+                android:onClick="chooseImageFromCamera"
+                android:text="Choose image from camera" />
+
+            <Button
+                android:id="@+id/chooseImageFromGalleryButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignEnd="@+id/chooseImageFromCameraButton"
+                android:layout_alignStart="@+id/chooseImageFromCameraButton"
+                android:layout_below="@+id/chooseImageFromCameraButton"
+                android:layout_marginTop="28dp"
+                android:onClick="chooseImageFromGallery"
+                android:text="Choose image from gallery" />
+        </RelativeLayout>
+    </ScrollView>
+
+
 
 </RelativeLayout>

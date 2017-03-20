@@ -1,39 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+
+    <ScrollView
+        xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="ee.ounapuu.herman.messenger.fragment.CreateTopicFragment">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        tools:context="ee.ounapuu.herman.messenger.fragment.CreateTopicFragment">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/textView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:text="Create topic view"
+                    android:textSize="30sp" />
+
+                <EditText
+                    android:id="@+id/editText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="32dp"
+                    android:ems="10"
+                    android:hint="Topic name"
+                    android:inputType="textPersonName"
+                    android:text="Enter topic name"
+                    android:layout_below="@+id/textView"
+                    android:layout_centerHorizontal="true" />
+
+
+                <ImageView
+                    android:id="@+id/profileImageView"
+                    android:layout_width="180dp"
+                    android:layout_height="180dp"
+                    android:src="@drawable/ic_person_black_180dp_img_placeholder"
+                    android:layout_below="@+id/editText"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="22dp" />
+
+                <Button
+                    android:id="@+id/chooseImageFromCameraButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignEnd="@+id/profileImageView"
+                    android:layout_alignStart="@+id/profileImageView"
+                    android:layout_below="@+id/profileImageView"
+                    android:layout_marginTop="29dp"
+                    android:onClick="chooseImageFromCamera"
+                    android:text="Choose image from camera" />
+
+                <Button
+                    android:id="@+id/chooseImageFromGalleryButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:onClick="chooseImageFromGallery"
+                    android:text="Choose image from gallery"
+                    android:layout_below="@+id/chooseImageFromCameraButton"
+                    android:layout_alignStart="@+id/chooseImageFromCameraButton"
+                    android:layout_alignEnd="@+id/chooseImageFromCameraButton" />
+
+                <Button
+                    android:id="@+id/button_add_new_topic"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Add new topic"
+                    android:layout_marginTop="23dp"
+                    android:layout_below="@+id/chooseImageFromGalleryButton"
+                    android:layout_centerHorizontal="true" />
+            </RelativeLayout>
+        </LinearLayout>
 
 
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:text="Create topic view"
-        android:textSize="30sp"
-        android:id="@+id/textView" />
+    </ScrollView>
 
-    <EditText
-        android:id="@+id/editText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/textView"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="60dp"
-        android:ems="10"
-        android:hint="Topic name"
-        android:inputType="textPersonName"
-        android:text="Enter topic name" />
 
-    <Button
-        android:id="@+id/button_add_new_topic"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/editText"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="23dp"
-        android:text="Add new topic" />
 
-</RelativeLayout>

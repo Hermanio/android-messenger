@@ -7,7 +7,6 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -21,7 +20,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import ee.ounapuu.herman.messenger.MainActivity;
 import ee.ounapuu.herman.messenger.R;
 
 import static android.app.Activity.RESULT_OK;
@@ -30,7 +28,7 @@ import static android.app.Activity.RESULT_OK;
  * Created by toks on 3/19/17.
  */
 
-public class ProfileView extends Fragment implements View.OnClickListener {
+public class ProfileViewFragment extends Fragment implements View.OnClickListener {
 
     private static final int REQUEST_CAMERA = 1;
     private static final int SELECT_FILE = 2;
@@ -39,8 +37,8 @@ public class ProfileView extends Fragment implements View.OnClickListener {
 
     public ImageView profileImage;
 
-    public static ProfileView newInstance() {
-        ProfileView fragment = new ProfileView();
+    public static ProfileViewFragment newInstance() {
+        ProfileViewFragment fragment = new ProfileViewFragment();
         return fragment;
     }
 
@@ -158,7 +156,6 @@ public class ProfileView extends Fragment implements View.OnClickListener {
                 break;
             case R.id.chooseImageFromGalleryButton:
                 chooseImageFromGallery(view);
-
                 break;
         }
     }
