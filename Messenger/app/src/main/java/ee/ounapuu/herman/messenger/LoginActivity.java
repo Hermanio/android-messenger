@@ -30,6 +30,6 @@ public class LoginActivity extends Activity {
     public void startRegistration(View view) {
         Intent i = new Intent(this, RegisterActivity.class);
         startActivity(i);
-        finish();
+        //finish();
     }
 }

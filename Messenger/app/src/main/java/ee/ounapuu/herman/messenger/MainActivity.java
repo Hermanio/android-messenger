@@ -3,18 +3,27 @@ package ee.ounapuu.herman.messenger;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Toast;
 
 import ee.ounapuu.herman.messenger.fragment.ChatFragment;
 import ee.ounapuu.herman.messenger.fragment.ProfileView;
 import ee.ounapuu.herman.messenger.fragment.ViewTopicActivity;
 import ee.ounapuu.herman.messenger.fragment.CreateTopicFragment;
 
+import static java.security.AccessController.getContext;
+
 
 public class MainActivity extends Activity {
+
+    private Fragment selectedFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,7 +35,7 @@ public class MainActivity extends Activity {
                 (new BottomNavigationView.OnNavigationItemSelectedListener() {
                     @Override
                     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                        Fragment selectedFragment = null;
+                        selectedFragment = null;
                         switch (item.getItemId()) {
                             case R.id.navigation_chat:
                                 selectedFragment = ChatFragment.newInstance();
@@ -50,10 +59,12 @@ public class MainActivity extends Activity {
 
         //Manually displaying the first fragment - one time only
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        transaction.replace(R.id.frame_layout, CreateTopicFragment.newInstance());
+        transaction.replace(R.id.frame_layout, ViewTopicActivity.newInstance());
         transaction.commit();
 
         //Used to select an item programmatically
         //bottomNavigationView.getMenu().getItem(2).setChecked(true);
     }
+
+
 }
