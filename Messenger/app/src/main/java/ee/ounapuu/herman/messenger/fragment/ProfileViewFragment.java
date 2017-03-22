@@ -1,6 +1,7 @@
 package ee.ounapuu.herman.messenger.fragment;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -20,6 +21,11 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
+import ee.ounapuu.herman.messenger.LoginActivity;
+import ee.ounapuu.herman.messenger.MainActivity;
 import ee.ounapuu.herman.messenger.R;
 
 import static android.app.Activity.RESULT_OK;
@@ -35,6 +41,7 @@ public class ProfileViewFragment extends Fragment implements View.OnClickListene
     private static final int REQUEST_STORAGE_PERMISSION = 1;
 
 
+
     public ImageView profileImage;
 
     public static ProfileViewFragment newInstance() {
@@ -45,8 +52,6 @@ public class ProfileViewFragment extends Fragment implements View.OnClickListene
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
     }
 
     @Override
@@ -87,13 +92,11 @@ public class ProfileViewFragment extends Fragment implements View.OnClickListene
 
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                    REQUEST_STORAGE_PERMISSION);
-        } else {
-            openPhotoSelect();
+                    REQUEST_STORAGE_PERMISSION);openPhotoSelect();
         }
-
-
     }
+
+
 
 
     /* Pastebin code example stuff below */

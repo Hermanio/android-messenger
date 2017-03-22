@@ -20,7 +20,7 @@
         app:layout_constraintLeft_toLeftOf="parent" />
 
     <EditText
-        android:id="@+id/email"
+        android:id="@+id/login_email"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="10"
@@ -35,7 +35,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/password"
+        android:id="@+id/login_password"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="10"
@@ -46,9 +46,9 @@
         app:layout_constraintBottom_toBottomOf="@+id/login_button"
         android:layout_marginTop="101dp"
         tools:layout_constraintLeft_creator="1"
-        android:layout_marginBottom="103dp"
-        app:layout_constraintLeft_toLeftOf="@+id/email"
-        app:layout_constraintTop_toTopOf="@+id/email" />
+        android:layout_marginBottom="147dp"
+        app:layout_constraintLeft_toLeftOf="@+id/login_email"
+        app:layout_constraintTop_toTopOf="@+id/login_email" />
 
     <Button
         android:id="@+id/login_button"

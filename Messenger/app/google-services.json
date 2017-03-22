@@ -1,0 +1,66 @@
+{
+  "project_info": {
+    "project_number": "924749514863",
+    "firebase_url": "https://messenger-3ade6.firebaseio.com",
+    "project_id": "messenger-3ade6",
+    "storage_bucket": "messenger-3ade6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:924749514863:android:8dd046cabc90190e",
+        "android_client_info": {
+          "package_name": "ee.ounapuu.herman.messenger"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "924749514863-n3uao29ok1mgrk4ldvoq2bm4b1ahim0q.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "ee.ounapuu.herman.messenger",
+            "certificate_hash": "c92d8aa1570ad2a8e5c40fa5ac74a2972ea9b124"
+          }
+        },
+        {
+          "client_id": "924749514863-rr4m4oii3rujib829fde5u0jg73fkrqp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "ee.ounapuu.herman.messenger",
+            "certificate_hash": "b69edaa41c2c3ba2709b1ea2e298cb3e5e96fde1"
+          }
+        },
+        {
+          "client_id": "924749514863-en56jumhqis21kngptit2kgsrfepavq6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBvrnIHxmXdqnjTU2PfYgrexzxuIqSz-js"
+        },
+        {
+          "current_key": "AIzaSyDlRswjoZDj5tXzFC-6mCTio4ciit9nwPU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "924749514863-en56jumhqis21kngptit2kgsrfepavq6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
