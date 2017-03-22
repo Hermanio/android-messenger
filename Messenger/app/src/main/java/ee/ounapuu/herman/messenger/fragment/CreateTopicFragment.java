@@ -36,6 +36,7 @@ public class CreateTopicFragment extends Fragment implements View.OnClickListene
 
 
     public ImageView profileImage;
+
     public static CreateTopicFragment newInstance() {
         CreateTopicFragment fragment = new CreateTopicFragment();
         return fragment;

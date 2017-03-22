@@ -37,33 +37,38 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 selectedFragment = null;
-                switch (item.getItemId()) {
-                    case R.id.navigation_chat:
-                        selectedFragment = ChatFragment.newInstance();
-                        break;
-                    case R.id.navigation_create_topic:
-                        selectedFragment = CreateTopicFragment.newInstance();
-                        break;
-                    case R.id.navigation_view_topic:
-                        Fragment fragment = getFragmentManager().findFragmentById(R.id.navigation_view_topic);
-                        if (fragment == null) {
+                int selectedMenuOption = item.getItemId();
+                Fragment fragment = getFragmentManager().findFragmentById(selectedMenuOption);
+
+                if (fragment == null) {
+                    switch (selectedMenuOption) {
+                        case R.id.navigation_chat:
+                            fragment = new ChatFragment();
+                            break;
+                        case R.id.navigation_create_topic:
+                            fragment = new CreateTopicFragment();
+                            break;
+                        case R.id.navigation_view_topic:
                             fragment = new ViewTopicFragment();
-                            getFragmentManager().beginTransaction().replace(R.id.frame_layout,fragment).commit();
-                        }
-                        selectedFragment = ViewTopicFragment.newInstance();
-                        break;
-                    case R.id.navigation_profile:
-                        selectedFragment = ProfileViewFragment.newInstance();
-                        break;
+                            break;
+                        case R.id.navigation_profile:
+                            fragment = new ProfileViewFragment();
+                            break;
+                    }
+
+                    // fragment = new ViewTopicFragment();
+                    // getFragmentManager().beginTransaction().replace(R.id.frame_layout,fragment).commit();
                 }
+
+                getFragmentManager().beginTransaction().replace(R.id.frame_layout, fragment).commit();
 
                 setLastOpenedFragment(item.getItemId());
 
-                FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                transaction.replace(R.id.frame_layout, selectedFragment);
+                //FragmentTransaction transaction = getFragmentManager().beginTransaction();
+               // transaction.replace(R.id.frame_layout, selectedFragment);
                 //transaction.remove(selectedFragment);
                 //transaction.add(R.id.frame_layout, selectedFragment);
-                transaction.commit();
+                //transaction.commit();
                 return true;
             }
         });
@@ -77,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
                 Fragment fragment = getFragmentManager().findFragmentById(R.id.navigation_view_topic);
                 if (fragment == null) {
                     fragment = new ViewTopicFragment();
-                    getFragmentManager().beginTransaction().replace(R.id.frame_layout,fragment).commit();
+                    getFragmentManager().beginTransaction().replace(R.id.frame_layout, fragment).commit();
                 }
                 //transaction.replace(R.id.frame_layout, ViewTopicFragment.newInstance());
                 break;

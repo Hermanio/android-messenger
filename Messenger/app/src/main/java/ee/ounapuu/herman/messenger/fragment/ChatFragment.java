@@ -69,7 +69,9 @@ public class ChatFragment extends Fragment{
         final User me = new User(myId, myName, myIcon);
         final User you = new User(yourId, yourName, yourIcon);
 
-        mChatView = (ChatView) getView().findViewById(R.id.chat_view);
+        if (mChatView == null) {
+            mChatView = (ChatView) getView().findViewById(R.id.chat_view);
+        }
 
         //Set UI parameters if you need
         mChatView.setRightBubbleColor(ContextCompat.getColor(getContext(), R.color.green500));
@@ -122,5 +124,13 @@ public class ChatFragment extends Fragment{
 
         });
 
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        //remove listeners so that we dont get memleaks
+        mChatView.setOnClickSendButtonListener(null);
     }
 }
