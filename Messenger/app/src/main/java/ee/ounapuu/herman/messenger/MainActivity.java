@@ -45,6 +45,11 @@ public class MainActivity extends AppCompatActivity {
                         selectedFragment = CreateTopicFragment.newInstance();
                         break;
                     case R.id.navigation_view_topic:
+                        Fragment fragment = getFragmentManager().findFragmentById(R.id.navigation_view_topic);
+                        if (fragment == null) {
+                            fragment = new ViewTopicFragment();
+                            getFragmentManager().beginTransaction().replace(R.id.frame_layout,fragment).commit();
+                        }
                         selectedFragment = ViewTopicFragment.newInstance();
                         break;
                     case R.id.navigation_profile:
@@ -56,6 +61,8 @@ public class MainActivity extends AppCompatActivity {
 
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
                 transaction.replace(R.id.frame_layout, selectedFragment);
+                //transaction.remove(selectedFragment);
+                //transaction.add(R.id.frame_layout, selectedFragment);
                 transaction.commit();
                 return true;
             }
@@ -67,7 +74,12 @@ public class MainActivity extends AppCompatActivity {
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         switch (getLastOpenedFragment()) {
             case R.id.navigation_view_topic:
-                transaction.replace(R.id.frame_layout, ViewTopicFragment.newInstance());
+                Fragment fragment = getFragmentManager().findFragmentById(R.id.navigation_view_topic);
+                if (fragment == null) {
+                    fragment = new ViewTopicFragment();
+                    getFragmentManager().beginTransaction().replace(R.id.frame_layout,fragment).commit();
+                }
+                //transaction.replace(R.id.frame_layout, ViewTopicFragment.newInstance());
                 break;
             case R.id.navigation_create_topic:
                 transaction.replace(R.id.frame_layout, CreateTopicFragment.newInstance());
