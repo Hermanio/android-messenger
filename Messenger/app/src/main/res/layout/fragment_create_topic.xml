@@ -8,7 +8,9 @@
         android:layout_height="match_parent"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
-        tools:context="ee.ounapuu.herman.messenger.fragment.CreateTopicFragment">
+        tools:context="ee.ounapuu.herman.messenger.fragment.CreateTopicFragment"
+    android:configChanges="keyboardHidden|orientation|screenSize"
+    >
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -20,24 +22,15 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/textView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:text="Create topic view"
-                    android:textSize="30sp" />
-
                 <EditText
                     android:id="@+id/editText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="32dp"
                     android:ems="10"
-                    android:hint="Topic name"
+                    android:hint="@string/hint_topic_name"
                     android:inputType="textPersonName"
-                    android:text="Enter topic name"
-                    android:layout_below="@+id/textView"
+                    android:text="@string/enter_topic_name"
                     android:layout_centerHorizontal="true" />
 
 

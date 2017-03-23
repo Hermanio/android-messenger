@@ -26,7 +26,6 @@ import ee.ounapuu.herman.messenger.fragment.CreateTopicFragment;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Fragment selectedFragment;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
 
@@ -58,11 +57,8 @@ public class MainActivity extends AppCompatActivity {
                 // ...
             }
         };
-
         setNavigationBarListener();
         openLastFragment();
-
-
     }
 
     private void setNavigationBarListener() {
@@ -88,20 +84,10 @@ public class MainActivity extends AppCompatActivity {
                             fragment = new ProfileViewFragment();
                             break;
                     }
-
-                    // fragment = new ViewTopicFragment();
-                    // getFragmentManager().beginTransaction().replace(R.id.frame_layout,fragment).commit();
                 }
 
                 getFragmentManager().beginTransaction().replace(R.id.frame_layout, fragment).commit();
-
                 setLastOpenedFragment(item.getItemId());
-
-                //FragmentTransaction transaction = getFragmentManager().beginTransaction();
-               // transaction.replace(R.id.frame_layout, selectedFragment);
-                //transaction.remove(selectedFragment);
-                //transaction.add(R.id.frame_layout, selectedFragment);
-                //transaction.commit();
                 return true;
             }
         });
@@ -131,7 +117,6 @@ public class MainActivity extends AppCompatActivity {
                     fragment = new ViewTopicFragment();
                     break;
             }
-            //fragment = new ViewTopicFragment();
             getFragmentManager().beginTransaction().replace(R.id.frame_layout, fragment).commit();
         }
     }

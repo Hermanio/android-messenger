@@ -4,7 +4,9 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="ee.ounapuu.herman.messenger.fragment.ChatFragment">
+    tools:context="ee.ounapuu.herman.messenger.fragment.ChatFragment"
+    android:configChanges="keyboardHidden|orientation|screenSize"
+    >
 
 <com.github.bassaer.chatmessageview.views.ChatView
     android:id="@+id/chat_view"

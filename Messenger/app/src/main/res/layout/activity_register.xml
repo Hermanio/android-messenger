@@ -9,7 +9,9 @@
         android:textSize="25dp"
         android:id="@+id/textView2"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:configChanges="keyboardHidden|orientation|screenSize"
+    />
 
     <EditText
         android:id="@+id/register_email"

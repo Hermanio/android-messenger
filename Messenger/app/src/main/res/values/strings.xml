@@ -11,4 +11,9 @@
     <string name="button_log_in">Log in</string>
     <string name="button_create_account">Create an account</string>
     <string name="heading_register_account">Register account</string>
+    <string name="profile_default_username">Username here</string>
+    <string name="choose_image_from_camera">Choose image from camera</string>
+    <string name="choose_image_from_gallery">Choose image from gallery</string>
+    <string name="hint_topic_name">Topic name</string>
+    <string name="enter_topic_name">Enter topic name</string>
 </resources>

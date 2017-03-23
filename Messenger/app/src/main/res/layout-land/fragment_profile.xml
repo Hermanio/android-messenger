@@ -11,7 +11,9 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -20,32 +22,33 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="53dp"
+                android:layout_marginTop="22dp"
                 android:text="@string/profile_default_username"
                 android:textSize="30sp"
-                android:id="@+id/profileUsernameText" />
+                android:id="@+id/profileUsernameText"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true" />
 
             <ImageView
                 android:id="@+id/profileImageView"
                 android:layout_width="180dp"
                 android:layout_height="180dp"
-                android:layout_below="@+id/profileUsernameText"
-                android:layout_centerHorizontal="true"
+                android:src="@drawable/ic_person_black_180dp_img_placeholder"
+                android:layout_marginEnd="31dp"
                 android:layout_marginTop="20dp"
-                android:src="@drawable/ic_person_black_180dp_img_placeholder" />
+                android:layout_below="@+id/profileUsernameText"
+                android:layout_toStartOf="@+id/chooseImageFromCameraButton" />
 
             <Button
                 android:id="@+id/chooseImageFromCameraButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignEnd="@+id/profileImageView"
-                android:layout_alignStart="@+id/profileImageView"
-                android:layout_below="@+id/profileImageView"
-                android:layout_marginTop="29dp"
                 android:onClick="chooseImageFromCamera"
-                android:text="@string/choose_image_from_camera" />
+                android:text="@string/choose_image_from_camera"
+                android:layout_alignTop="@+id/profileImageView"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="54dp"
+                android:layout_marginTop="7dp" />
 
             <Button
                 android:id="@+id/chooseImageFromGalleryButton"

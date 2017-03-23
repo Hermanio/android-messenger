@@ -18,6 +18,8 @@ import com.github.bassaer.chatmessageview.models.Message;
 import com.github.bassaer.chatmessageview.models.User;
 import com.github.bassaer.chatmessageview.utils.ChatBot;
 import com.github.bassaer.chatmessageview.views.ChatView;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Random;
 
@@ -31,6 +33,10 @@ public class ChatFragment extends Fragment{
 
     private ChatView mChatView;
 
+   private  FirebaseDatabase database = FirebaseDatabase.getInstance();
+    private DatabaseReference myRef = database.getReference("message");
+
+
 
     public static ChatFragment newInstance() {
         ChatFragment fragment = new ChatFragment();
@@ -40,6 +46,11 @@ public class ChatFragment extends Fragment{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //database.getReference("message").setValue("message one value");
+        //database.getReference("message/moar").setValue("moar messages");
+
+
     }
 
     @Override
@@ -54,6 +65,19 @@ public class ChatFragment extends Fragment{
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        setupChatView();
+
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        //remove listeners so that we dont get memleaks
+        mChatView.setOnClickSendButtonListener(null);
+    }
+
+    private void setupChatView() {
 
         //User id
         int myId = 0;
@@ -73,7 +97,7 @@ public class ChatFragment extends Fragment{
             mChatView = (ChatView) getView().findViewById(R.id.chat_view);
         }
 
-        //Set UI parameters if you need
+
         mChatView.setRightBubbleColor(ContextCompat.getColor(getContext(), R.color.green500));
         mChatView.setLeftBubbleColor(Color.WHITE);
         mChatView.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.blueGray500));
@@ -87,6 +111,7 @@ public class ChatFragment extends Fragment{
         mChatView.setInputTextHint("new message...");
         mChatView.setMessageMarginTop(5);
         mChatView.setMessageMarginBottom(5);
+
 
         //Click Send Button
         mChatView.setOnClickSendButtonListener(new View.OnClickListener() {
@@ -123,14 +148,13 @@ public class ChatFragment extends Fragment{
             }
 
         });
-
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
+    private void sendMessage() {
+        //get necessary info, send to GUI and DB at same time
+    }
 
-        //remove listeners so that we dont get memleaks
-        mChatView.setOnClickSendButtonListener(null);
+    private void receiveMessage() {
+        //create using db listener, if own message, ignore
     }
 }
