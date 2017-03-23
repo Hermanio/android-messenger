@@ -20,6 +20,15 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+
 import ee.ounapuu.herman.messenger.R;
 
 import static android.app.Activity.RESULT_OK;
@@ -34,6 +43,8 @@ public class CreateTopicFragment extends Fragment implements View.OnClickListene
     private static final int SELECT_FILE = 2;
     private static final int REQUEST_STORAGE_PERMISSION = 1;
 
+    private StorageReference mStorageRef;
+
 
     public ImageView profileImage;
 
@@ -45,6 +56,7 @@ public class CreateTopicFragment extends Fragment implements View.OnClickListene
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mStorageRef = FirebaseStorage.getInstance().getReference();
     }
 
     @Override
@@ -84,8 +96,8 @@ public class CreateTopicFragment extends Fragment implements View.OnClickListene
         Toast.makeText(getContext(), "Choose img from gallery", Toast.LENGTH_SHORT).show();
 
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                    REQUEST_STORAGE_PERMISSION);
+            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_STORAGE_PERMISSION);
+            openPhotoSelect();
         } else {
             openPhotoSelect();
         }
@@ -124,11 +136,14 @@ public class CreateTopicFragment extends Fragment implements View.OnClickListene
             if (requestCode == REQUEST_CAMERA) {
                 Bitmap image = (Bitmap) data.getExtras().get("data");
                 profileImage.setImageBitmap(image);
+                uploadImageToStorage(image);
             } else if (requestCode == SELECT_FILE) {
                 Uri selectedImageUri = data.getData();
                 String imagePath = getRealPathFromUri(selectedImageUri);
                 Bitmap image = BitmapFactory.decodeFile(imagePath);
                 profileImage.setImageBitmap(image);
+                uploadImageToStorage(image);
+
             }
         }
     }
@@ -156,5 +171,34 @@ public class CreateTopicFragment extends Fragment implements View.OnClickListene
                 chooseImageFromGallery(view);
                 break;
         }
+    }
+
+    private void uploadImageToStorage(Bitmap image) {
+        //todo replace with topic name
+        StorageReference uploadImageReference = mStorageRef.child("usernamehere/test.jpg");
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        image.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] data = baos.toByteArray();
+
+        UploadTask uploadTask = uploadImageReference.putBytes(data);
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle unsuccessful uploads
+                Toast.makeText(getContext(), "upload failure", Toast.LENGTH_SHORT).show();
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
+                //todo: update the image reference for topic
+                //todo: actually create topic here
+                Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                Toast.makeText(getContext(), downloadUrl.toString(), Toast.LENGTH_SHORT).show();
+
+            }
+        });
+
     }
 }

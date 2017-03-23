@@ -14,15 +14,27 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.signature.StringSignature;
+import com.firebase.ui.storage.images.FirebaseImageLoader;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+
+import java.io.ByteArrayOutputStream;
 
 import ee.ounapuu.herman.messenger.LoginActivity;
 import ee.ounapuu.herman.messenger.MainActivity;
@@ -39,10 +51,18 @@ public class ProfileViewFragment extends Fragment implements View.OnClickListene
     private static final int REQUEST_CAMERA = 1;
     private static final int SELECT_FILE = 2;
     private static final int REQUEST_STORAGE_PERMISSION = 1;
+    private StorageReference mStorageRef;
+    private FirebaseUser user;
 
 
-
+    private String userName;
+    private String userEmail;
+    private Uri photoUrl;
+    private String userId;
     public ImageView profileImage;
+    private ProgressBar loadingSpinner;
+
+    private Bitmap uploadReadyImage;
 
     public static ProfileViewFragment newInstance() {
         ProfileViewFragment fragment = new ProfileViewFragment();
@@ -52,6 +72,16 @@ public class ProfileViewFragment extends Fragment implements View.OnClickListene
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mStorageRef = FirebaseStorage.getInstance().getReference();
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        loadUserData();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        retrieveProfilePicture();
+
     }
 
     @Override
@@ -60,6 +90,9 @@ public class ProfileViewFragment extends Fragment implements View.OnClickListene
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
         profileImage = (ImageView) view.findViewById(R.id.profileImageView);
+        loadingSpinner = (ProgressBar) view.findViewById(R.id.loadingSpinner);
+        loadingSpinner.setVisibility(View.GONE);
+
 
         Button cameraImagePickerButton = (Button) view.findViewById(R.id.chooseImageFromCameraButton);
         cameraImagePickerButton.setOnClickListener(this);
@@ -91,14 +124,14 @@ public class ProfileViewFragment extends Fragment implements View.OnClickListene
         Toast.makeText(getContext(), "Choose img from gallery", Toast.LENGTH_SHORT).show();
 
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                    REQUEST_STORAGE_PERMISSION);openPhotoSelect();
+            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_STORAGE_PERMISSION);
+            openPhotoSelect();
+        } else {
+            openPhotoSelect();
         }
+
+
     }
-
-
-
-
     /* Pastebin code example stuff below */
 
     @Override
@@ -124,18 +157,26 @@ public class ProfileViewFragment extends Fragment implements View.OnClickListene
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        loadingSpinner.setVisibility(View.VISIBLE);
 
         if (resultCode == RESULT_OK) {
             if (requestCode == REQUEST_CAMERA) {
                 Bitmap image = (Bitmap) data.getExtras().get("data");
-                profileImage.setImageBitmap(image);
+                uploadReadyImage = image;
+                uploadImageToStorage(image);
+
             } else if (requestCode == SELECT_FILE) {
                 Uri selectedImageUri = data.getData();
                 String imagePath = getRealPathFromUri(selectedImageUri);
                 Bitmap image = BitmapFactory.decodeFile(imagePath);
-                profileImage.setImageBitmap(image);
+                uploadReadyImage = image;
+
+                uploadImageToStorage(image);
+
             }
         }
+        loadingSpinner.setVisibility(View.GONE);
+
     }
 
     private String getRealPathFromUri(Uri contentUri) {
@@ -162,4 +203,56 @@ public class ProfileViewFragment extends Fragment implements View.OnClickListene
                 break;
         }
     }
+
+    private void uploadImageToStorage(Bitmap image) {
+        //todo replace with topic name
+        Toast.makeText(getContext(), userId, Toast.LENGTH_SHORT).show();
+        StorageReference uploadImageReference = mStorageRef.child(userId+".jpg");
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        image.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] data = baos.toByteArray();
+
+        UploadTask uploadTask = uploadImageReference.putBytes(data);
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle unsuccessful uploads
+                Toast.makeText(getContext(), "upload failure", Toast.LENGTH_SHORT).show();
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
+                profileImage.setImageBitmap(uploadReadyImage);
+
+                //Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                //Toast.makeText(getContext(), downloadUrl.toString(), Toast.LENGTH_SHORT).show();
+
+            }
+        });
+
+    }
+    private void retrieveProfilePicture() {
+        StorageReference uploadImageReference = mStorageRef.child(userId+".jpg");
+        Log.d("dicks", "image retrieve");
+        Glide.with(getContext()).using(new FirebaseImageLoader()).
+        load(uploadImageReference).
+        signature(new StringSignature(String.valueOf(System.currentTimeMillis())))
+                .into(profileImage);
+    }
+
+
+    private void loadUserData() {
+        if (user != null) {
+            // Name, email address, and profile photo Url
+            userName = user.getDisplayName();
+            userEmail = user.getEmail();
+            photoUrl = user.getPhotoUrl();
+            userId = user.getUid();
+        }
+    }
+
+
+
 }

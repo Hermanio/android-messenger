@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:configChanges="keyboardHidden|orientation|screenSize"
+    tools:context="ee.ounapuu.herman.messenger.LoginActivity">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/heading_login"
+        android:textSize="25dp"
+        android:id="@+id/textView2"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="15dp" />
+
+    <EditText
+        android:id="@+id/login_email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="@string/hint_login_email"
+        android:inputType="textEmailAddress"
+        android:layout_alignBaseline="@+id/login_button"
+        android:layout_alignBottom="@+id/login_button"
+        android:layout_alignEnd="@+id/textView2"
+        android:layout_marginEnd="46dp" />
+
+    <EditText
+        android:id="@+id/login_password"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="@string/hint_login_password"
+        android:inputType="textPassword"
+        android:layout_alignTop="@+id/registerButton"
+        android:layout_alignStart="@+id/login_email" />
+
+    <Button
+        android:id="@+id/login_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="login"
+        android:text="@string/button_log_in"
+        android:layout_above="@+id/registerButton"
+        android:layout_marginBottom="39dp"
+        android:layout_alignStart="@+id/registerButton"
+        android:layout_alignEnd="@+id/registerButton" />
+
+    <Button
+        android:id="@+id/registerButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="startRegistration"
+        android:text="@string/button_create_account"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="28dp"
+        android:layout_marginBottom="49dp" />
+
+</RelativeLayout>

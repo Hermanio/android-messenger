@@ -23,30 +23,13 @@ import com.google.firebase.auth.FirebaseUser;
 public class LoginActivity extends Activity {
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        mAuth = FirebaseAuth.getInstance();
+        setupFireBaseAuth();
 
-        mAuthListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-                if (user != null) {
-                    // User is signed in
-                    Intent i = new Intent(LoginActivity.this, MainActivity.class);
-                    startActivity(i);
-                    finish();
-                    //Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
-                } else {
-                    // User is signed out
-                    Toast.makeText(LoginActivity.this, "user is logged out", Toast.LENGTH_SHORT).show();
-                    //Log.d(TAG, "onAuthStateChanged:signed_out");
-                }
-                // ...
-            }
-        };
     }
 
     public void login(View view) {
@@ -84,6 +67,24 @@ public class LoginActivity extends Activity {
         Intent i = new Intent(this, RegisterActivity.class);
         startActivity(i);
         //finish();
+    }
+
+    private void setupFireBaseAuth() {
+        mAuth = FirebaseAuth.getInstance();
+
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if (user != null) {
+                    Intent i = new Intent(LoginActivity.this, MainActivity.class);
+                    startActivity(i);
+                    finish();
+                } else {
+                    Toast.makeText(LoginActivity.this, "user is logged out", Toast.LENGTH_SHORT).show();
+                }
+            }
+        };
     }
 
     @Override

@@ -34,6 +34,7 @@
                 android:layout_below="@+id/profileUsernameText"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="20dp"
+                android:saveEnabled="false"
                 android:src="@drawable/ic_person_black_180dp_img_placeholder" />
 
             <Button
@@ -60,6 +61,15 @@
         </RelativeLayout>
     </ScrollView>
 
+    <ProgressBar
+        android:id="@+id/loadingSpinner"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginEnd="24dp"
+        android:layout_marginTop="46dp" />
 
 
 </RelativeLayout>

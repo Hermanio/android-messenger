@@ -35,21 +35,7 @@ public class RegisterActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        mAuth = FirebaseAuth.getInstance();
-        mAuthListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-                if (user != null) {
-                    // User is signed in
-                    Intent i = new Intent(RegisterActivity.this, MainActivity.class);
-                    startActivity(i);
-                    finish();
-                } else {
-                    // User is signed out
-                }
-            }
-        };
+     setupFireBaseAuth();
     }
 
     public void register(View view) {
@@ -60,26 +46,36 @@ public class RegisterActivity extends Activity {
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-
-                        // If sign in fails, display a message to the user. If sign in succeeds
-                        // the auth state listener will be notified and logic to handle the
-                        // signed in user can be handled in the listener.
                         if (!task.isSuccessful()) {
                             Toast.makeText(RegisterActivity.this, "Authentication not successful",
                                     Toast.LENGTH_SHORT).show();
 
                         } else {
+                            //todo: add user info to db
                             Intent i = new Intent(getApplicationContext(), MainActivity.class);
                             startActivity(i);
                             finish();
                         }
-
-                        // ...
                     }
                 });
 
-        //Toast.makeText(this, "todo: add actual registration", Toast.LENGTH_SHORT).show();
 
+    }
+
+    private void setupFireBaseAuth() {
+        mAuth = FirebaseAuth.getInstance();
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if (user != null) {
+                    Intent i = new Intent(RegisterActivity.this, MainActivity.class);
+                    startActivity(i);
+                    finish();
+                } else {
+                }
+            }
+        };
     }
 
     @Override

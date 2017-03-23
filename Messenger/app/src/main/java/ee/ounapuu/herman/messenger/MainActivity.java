@@ -36,27 +36,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mAuth = FirebaseAuth.getInstance();
-
-        mAuthListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-                if (user != null) {
-                    // User is signed in
-                    Toast.makeText(MainActivity.this, user.getEmail(), Toast.LENGTH_SHORT).show();
-                    //all is OK
-                    //Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
-                } else {
-                    Intent i = new Intent(MainActivity.this, LoginActivity.class);
-                    startActivity(i);
-                    finish();
-                    // User is signed out
-                    //Log.d(TAG, "onAuthStateChanged:signed_out");
-                }
-                // ...
-            }
-        };
+        setupFireBaseAuth();
         setNavigationBarListener();
         openLastFragment();
     }
@@ -164,5 +144,23 @@ public class MainActivity extends AppCompatActivity {
         signOut();
         setLastOpenedFragment(-1);
         return true;
+    }
+
+    private void setupFireBaseAuth() {
+        mAuth = FirebaseAuth.getInstance();
+
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if (user != null) {
+                    Toast.makeText(MainActivity.this, user.getEmail(), Toast.LENGTH_SHORT).show();
+                } else {
+                    Intent i = new Intent(MainActivity.this, LoginActivity.class);
+                    startActivity(i);
+                    finish();
+                }
+            }
+        };
     }
 }

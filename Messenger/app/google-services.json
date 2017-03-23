@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "924749514863-id5jqno3brt0l8hrttj8vqdp54boe69f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "ee.ounapuu.herman.messenger",
+            "certificate_hash": "a0110899ada2c3d4bda86b083c3e01bc59dd44a5"
+          }
+        },
+        {
           "client_id": "924749514863-n3uao29ok1mgrk4ldvoq2bm4b1ahim0q.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
