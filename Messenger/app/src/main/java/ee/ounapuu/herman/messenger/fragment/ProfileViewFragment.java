@@ -1,7 +1,6 @@
 package ee.ounapuu.herman.messenger.fragment;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -36,8 +35,6 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
 
-import ee.ounapuu.herman.messenger.LoginActivity;
-import ee.ounapuu.herman.messenger.MainActivity;
 import ee.ounapuu.herman.messenger.R;
 
 import static android.app.Activity.RESULT_OK;
@@ -89,9 +86,9 @@ public class ProfileViewFragment extends Fragment implements View.OnClickListene
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
-        profileImage = (ImageView) view.findViewById(R.id.profileImageView);
-        loadingSpinner = (ProgressBar) view.findViewById(R.id.loadingSpinner);
-        loadingSpinner.setVisibility(View.GONE);
+        profileImage = (ImageView) view.findViewById(R.id.newTopicImageView);
+        //loadingSpinner = (ProgressBar) view.findViewById(R.id.loadingSpinner);
+        //loadingSpinner.setVisibility(View.GONE);
 
 
         Button cameraImagePickerButton = (Button) view.findViewById(R.id.chooseImageFromCameraButton);

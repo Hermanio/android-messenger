@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -17,17 +18,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.util.HashMap;
 
 import ee.ounapuu.herman.messenger.R;
 
@@ -44,9 +48,13 @@ public class CreateTopicFragment extends Fragment implements View.OnClickListene
     private static final int REQUEST_STORAGE_PERMISSION = 1;
 
     private StorageReference mStorageRef;
+    private FirebaseDatabase database;
+    private DatabaseReference dbRef;
 
+    private Bitmap uploadReadyImage;
 
-    public ImageView profileImage;
+    private ImageView newTopicImage;
+    private EditText newTopicName;
 
     public static CreateTopicFragment newInstance() {
         CreateTopicFragment fragment = new CreateTopicFragment();
@@ -57,6 +65,12 @@ public class CreateTopicFragment extends Fragment implements View.OnClickListene
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mStorageRef = FirebaseStorage.getInstance().getReference();
+
+        database = FirebaseDatabase.getInstance();
+        dbRef = database.getReference();
+        //dbRef.child("topics").child("thisistopic").child("somevaluesinlistorsth").setValue("dunno some stuff i guess");
+
+
     }
 
     @Override
@@ -64,7 +78,8 @@ public class CreateTopicFragment extends Fragment implements View.OnClickListene
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_create_topic, container, false);
 
-        profileImage = (ImageView) view.findViewById(R.id.profileImageView);
+        newTopicImage = (ImageView) view.findViewById(R.id.newTopicImageView);
+        newTopicName = (EditText) view.findViewById(R.id.new_topic_name);
 
         Button cameraImagePickerButton = (Button) view.findViewById(R.id.chooseImageFromCameraButton);
         cameraImagePickerButton.setOnClickListener(this);
@@ -135,14 +150,17 @@ public class CreateTopicFragment extends Fragment implements View.OnClickListene
         if (resultCode == RESULT_OK) {
             if (requestCode == REQUEST_CAMERA) {
                 Bitmap image = (Bitmap) data.getExtras().get("data");
-                profileImage.setImageBitmap(image);
-                uploadImageToStorage(image);
+                uploadReadyImage = image;
+                newTopicImage.setImageBitmap(image);
+               // uploadImageToStorage(image);
             } else if (requestCode == SELECT_FILE) {
                 Uri selectedImageUri = data.getData();
                 String imagePath = getRealPathFromUri(selectedImageUri);
                 Bitmap image = BitmapFactory.decodeFile(imagePath);
-                profileImage.setImageBitmap(image);
-                uploadImageToStorage(image);
+                uploadReadyImage = image;
+                newTopicImage.setImageBitmap(image);
+
+               // uploadImageToStorage(image);
 
             }
         }
@@ -170,12 +188,18 @@ public class CreateTopicFragment extends Fragment implements View.OnClickListene
             case R.id.chooseImageFromGalleryButton:
                 chooseImageFromGallery(view);
                 break;
+            case R.id.button_add_new_topic:
+                //todo: create new topic here
+                //first upload image
+                //then save info to DB
+                createNewTopic(uploadReadyImage, newTopicName.getText().toString());
+                break;
         }
     }
 
-    private void uploadImageToStorage(Bitmap image) {
+    private void createNewTopic(Bitmap image, String topicName) {
         //todo replace with topic name
-        StorageReference uploadImageReference = mStorageRef.child("usernamehere/test.jpg");
+        StorageReference uploadImageReference = mStorageRef.child(topicName + ".jpg");
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         image.compress(Bitmap.CompressFormat.JPEG, 100, baos);
@@ -191,14 +215,16 @@ public class CreateTopicFragment extends Fragment implements View.OnClickListene
         }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
-                //todo: update the image reference for topic
-                //todo: actually create topic here
-                Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                Toast.makeText(getContext(), downloadUrl.toString(), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getContext(), downloadUrl.toString(), Toast.LENGTH_SHORT).show();
+                //createNewTopic(newTopicName.getText().toString());
+//todo: push data to DB, if successful then go to that new topic
+
+
 
             }
         });
 
     }
+
+
 }

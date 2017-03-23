@@ -23,7 +23,7 @@
                 android:layout_centerHorizontal="true" />
 
             <ImageView
-                android:id="@+id/profileImageView"
+                android:id="@+id/newTopicImageView"
                 android:layout_width="180dp"
                 android:layout_height="180dp"
                 android:src="@drawable/ic_person_black_180dp_img_placeholder"
@@ -38,7 +38,7 @@
                 android:layout_height="wrap_content"
                 android:onClick="chooseImageFromCamera"
                 android:text="@string/choose_image_from_camera"
-                android:layout_alignTop="@+id/profileImageView"
+                android:layout_alignTop="@+id/newTopicImageView"
                 android:layout_alignParentEnd="true"
                 android:layout_marginEnd="54dp"
                 android:layout_marginTop="7dp" />

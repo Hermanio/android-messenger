@@ -5,7 +5,7 @@
     android:orientation="vertical">
 
     <EditText
-        android:id="@+id/editText"
+        android:id="@+id/new_topic_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
@@ -13,14 +13,14 @@
         android:ems="10"
         android:hint="@string/hint_topic_name"
         android:inputType="textPersonName"
-        android:text="@string/enter_topic_name" />
+      />
 
 
     <ImageView
-        android:id="@+id/profileImageView"
+        android:id="@+id/newTopicImageView"
         android:layout_width="180dp"
         android:layout_height="180dp"
-        android:layout_below="@+id/editText"
+        android:layout_below="@+id/new_topic_name"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="22dp"
         android:src="@drawable/placeholder" />
@@ -29,9 +29,9 @@
         android:id="@+id/chooseImageFromCameraButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/profileImageView"
-        android:layout_alignStart="@+id/profileImageView"
-        android:layout_below="@+id/profileImageView"
+        android:layout_alignEnd="@+id/newTopicImageView"
+        android:layout_alignStart="@+id/newTopicImageView"
+        android:layout_below="@+id/newTopicImageView"
         android:layout_marginTop="29dp"
         android:onClick="chooseImageFromCamera"
         android:text="Choose image from camera" />
