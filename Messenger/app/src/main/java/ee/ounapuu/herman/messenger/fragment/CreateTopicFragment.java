@@ -217,8 +217,7 @@ public class CreateTopicFragment extends Fragment implements View.OnClickListene
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 //Toast.makeText(getContext(), downloadUrl.toString(), Toast.LENGTH_SHORT).show();
                 //createNewTopic(newTopicName.getText().toString());
-//todo: push data to DB, if successful then go to that new topic
-
+                //todo: push data to DB, if successful then go to that new topic
 
 
             }

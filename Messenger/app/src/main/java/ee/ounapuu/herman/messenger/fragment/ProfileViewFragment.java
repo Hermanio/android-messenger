@@ -20,6 +20,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -32,6 +33,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+
+import org.w3c.dom.Text;
 
 import java.io.ByteArrayOutputStream;
 
@@ -56,8 +59,9 @@ public class ProfileViewFragment extends Fragment implements View.OnClickListene
     private String userEmail;
     private Uri photoUrl;
     private String userId;
-    public ImageView profileImage;
-    private ProgressBar loadingSpinner;
+
+    private TextView profileName;
+    private ImageView profileImage;
 
     private Bitmap uploadReadyImage;
 
@@ -70,7 +74,6 @@ public class ProfileViewFragment extends Fragment implements View.OnClickListene
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mStorageRef = FirebaseStorage.getInstance().getReference();
-        user = FirebaseAuth.getInstance().getCurrentUser();
         loadUserData();
     }
 
@@ -86,7 +89,10 @@ public class ProfileViewFragment extends Fragment implements View.OnClickListene
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
-        profileImage = (ImageView) view.findViewById(R.id.newTopicImageView);
+        profileImage = (ImageView) view.findViewById(R.id.profileImage);
+        profileName = (TextView) view.findViewById(R.id.profileUsernameText);
+        profileName.setText(userEmail);
+
         //loadingSpinner = (ProgressBar) view.findViewById(R.id.loadingSpinner);
         //loadingSpinner.setVisibility(View.GONE);
 
@@ -154,7 +160,6 @@ public class ProfileViewFragment extends Fragment implements View.OnClickListene
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        loadingSpinner.setVisibility(View.VISIBLE);
 
         if (resultCode == RESULT_OK) {
             if (requestCode == REQUEST_CAMERA) {
@@ -172,7 +177,6 @@ public class ProfileViewFragment extends Fragment implements View.OnClickListene
 
             }
         }
-        loadingSpinner.setVisibility(View.GONE);
 
     }
 
@@ -204,7 +208,7 @@ public class ProfileViewFragment extends Fragment implements View.OnClickListene
     private void uploadImageToStorage(Bitmap image) {
         //todo replace with topic name
         Toast.makeText(getContext(), userId, Toast.LENGTH_SHORT).show();
-        StorageReference uploadImageReference = mStorageRef.child(userId+".jpg");
+        StorageReference uploadImageReference = mStorageRef.child(userId + ".jpg");
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         image.compress(Bitmap.CompressFormat.JPEG, 100, baos);
@@ -230,17 +234,20 @@ public class ProfileViewFragment extends Fragment implements View.OnClickListene
         });
 
     }
+
     private void retrieveProfilePicture() {
-        StorageReference uploadImageReference = mStorageRef.child(userId+".jpg");
+        StorageReference uploadImageReference = mStorageRef.child(userId + ".jpg");
         Log.d("dicks", "image retrieve");
         Glide.with(getContext()).using(new FirebaseImageLoader()).
-        load(uploadImageReference).
-        signature(new StringSignature(String.valueOf(System.currentTimeMillis())))
+                load(uploadImageReference).
+                signature(new StringSignature(String.valueOf(System.currentTimeMillis())))
                 .into(profileImage);
     }
 
 
     private void loadUserData() {
+        user = FirebaseAuth.getInstance().getCurrentUser();
+
         if (user != null) {
             // Name, email address, and profile photo Url
             userName = user.getDisplayName();
@@ -249,7 +256,6 @@ public class ProfileViewFragment extends Fragment implements View.OnClickListene
             userId = user.getUid();
         }
     }
-
 
 
 }
