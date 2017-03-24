@@ -1,12 +1,10 @@
 package ee.ounapuu.herman.messenger.fragment;
 
 import android.app.Fragment;
-import android.content.res.Configuration;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
+import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
@@ -15,16 +13,21 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.github.bassaer.chatmessageview.models.Message;
 import com.github.bassaer.chatmessageview.models.User;
-import com.github.bassaer.chatmessageview.utils.ChatBot;
 import com.github.bassaer.chatmessageview.views.ChatView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-
-import org.w3c.dom.Text;
-
-import java.util.Random;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import ee.ounapuu.herman.messenger.R;
 
@@ -38,11 +41,21 @@ public class ChatFragment extends Fragment {
 
 
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
-    private DatabaseReference myRef = database.getReference("message");
+    private DatabaseReference dbRef;
+
+    private StorageReference mStorageRef;
+
+
+    private FirebaseAuth mAuth = FirebaseAuth.getInstance();
+
 
     private String chatTopic;
     private TextView chatTitle;
+    private Bitmap myIcon;
+    private Bitmap otherIcon;
 
+
+    private String uid;
 
     public static ChatFragment newInstance() {
         ChatFragment fragment = new ChatFragment();
@@ -52,6 +65,7 @@ public class ChatFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mStorageRef = FirebaseStorage.getInstance().getReference();
 
         //database.getReference("message").setValue("message one value");
         //database.getReference("message/moar").setValue("moar messages");
@@ -68,6 +82,8 @@ public class ChatFragment extends Fragment {
             if (getArguments().getString("topicName") != null) {
                 chatTopic = getArguments().getString("topicName");
                 chatTitle.setText(chatTopic);
+                dbRef = database.getReference("/topics/" + chatTopic + "/");
+                //dbRef.child("messages").push().setValue("test message please ignore");
                 //Toast.makeText(getContext(), chatTopic, Toast.LENGTH_SHORT).show();
             } else {
                 displayErrorMessage();
@@ -96,21 +112,17 @@ public class ChatFragment extends Fragment {
         mChatView.setOnClickSendButtonListener(null);
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Toast.makeText(getContext(), "onsavedinstancestate", Toast.LENGTH_SHORT).show();
+
+        outState.putString("topicName", chatTopic);
+    }
+
+
     private void setupChatView() {
 
-        //User id
-        int myId = 0;
-        //User icon
-        Bitmap myIcon = BitmapFactory.decodeResource(getResources(), R.drawable.face_2);
-        //User name
-        String myName = "Michael";
-
-        int yourId = 1;
-        Bitmap yourIcon = BitmapFactory.decodeResource(getResources(), R.drawable.face_1);
-        String yourName = "Emily";
-
-        final User me = new User(myId, myName, myIcon);
-        final User you = new User(yourId, yourName, yourIcon);
 
         if (mChatView == null) {
             mChatView = (ChatView) getView().findViewById(R.id.chat_view);
@@ -137,47 +149,135 @@ public class ChatFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 //new message
-                Message message = new Message.Builder()
-                        .setUser(me)
-                        .setRightMessage(true)
-                        .setMessageText(mChatView.getInputText())
-                        .hideIcon(true)
-                        .build();
-                //Set to chat view
-                mChatView.send(message);
-                //Reset edit text
-                mChatView.setInputText("");
+                sendMessage();
 
-                //Receive message
-                final Message receivedMessage = new Message.Builder()
-                        .setUser(you)
-                        .setRightMessage(false)
-                        .setMessageText(ChatBot.talk(me.getName(), message.getMessageText()))
-                        .build();
-
-                // This is a demo bot
-                // Return within 3 seconds
-                int sendDelay = (new Random().nextInt(4) + 1) * 1000;
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        mChatView.receive(receivedMessage);
-                    }
-                }, sendDelay);
             }
 
         });
+
+
     }
 
     private void sendMessage() {
+        //User id
+        //todo: see if this needs replacing
+        int myId = 0;
+        //User icon
+        getImageForUser(mAuth.getCurrentUser().getUid());
+
+        //.signature(new StringSignature(String.valueOf(System.currentTimeMillis())))
+        ;
+        //User name
+
+        //todo: replace with user display name
+        String myName = mAuth.getCurrentUser().getEmail();
+
+        // int yourId = 1;
+        // Bitmap yourIcon = BitmapFactory.decodeResource(getResources(), R.drawable.face_1);
+        //String yourName = "Emily";
+
+        final User me = new User(myId, myName, myIcon);
+        //final User you = new User(yourId, yourName, yourIcon);
+
+        Message message = new Message.Builder()
+                .setUser(me)
+                .setRightMessage(true)
+                .setMessageText(mChatView.getInputText())
+                .hideIcon(true)
+                .build();
+        //Set to chat view
+        mChatView.send(message);
+        sendMessageToDB(mChatView.getInputText());
+        //Reset edit text
+        mChatView.setInputText("");
+
+        //Receive message
+        // final Message receivedMessage = new Message.Builder()
+        //        .setUser(you)
+        //        .setRightMessage(false)
+        //        .setMessageText(ChatBot.talk(me.getName(), message.getMessageText()))
+        //        .build();
+
+        // This is a demo bot
+        // Return within 3 seconds
+        // int sendDelay = (new Random().nextInt(4) + 1) * 1000;
+        // new Handler().postDelayed(new Runnable() {
+        //     @Override
+        //     public void run() {
+        //          mChatView.receive(receivedMessage);
+        //      }
+        //  }, sendDelay);
+
         //get necessary info, send to GUI and DB at same time
+        //todo: remove and replace with listener
+        receiveMessage();
     }
 
     private void receiveMessage() {
         //create using db listener, if own message, ignore
+        getImageForChatMember("vodka");
+        final User otherUser = new User(1, "vodka", otherIcon);
+
+        Message message = new Message.Builder()
+                .setUser(otherUser)
+                .setRightMessage(false)
+                .setMessageText("test message")
+                .hideIcon(false)
+                .build();
+        mChatView.receive(message);
     }
 
     private void displayErrorMessage() {
         Toast.makeText(getContext(), "Please choose or create a topic first!", Toast.LENGTH_SHORT).show();
     }
+
+    private void getImageForUser(String username) {
+        String imagePath = username + ".jpg";
+        StorageReference storageReference = mStorageRef.child((imagePath));
+
+        Glide.with(getContext()).using(new FirebaseImageLoader()).
+                load(storageReference).asBitmap().into(new SimpleTarget<Bitmap>(100, 100) {
+            @Override
+            public void onResourceReady(Bitmap resource, GlideAnimation glideAnimation) {
+                myIcon = resource; // Possibly runOnUiThread()
+            }
+        });
+    }
+
+    private void getImageForChatMember(String username) {
+        //String imagePath = username + ".jpg";
+        //todo: replace with something else when user info GET operations are ready, this is for testing only
+        String imagePath = "tfIBzXWgD4XnyG3y2IjD08SgHeq1.jpg";
+        StorageReference storageReference = mStorageRef.child((imagePath));
+
+        Glide.with(getContext()).using(new FirebaseImageLoader()).
+                load(storageReference).asBitmap().into(new SimpleTarget<Bitmap>(100, 100) {
+            @Override
+            public void onResourceReady(Bitmap resource, GlideAnimation glideAnimation) {
+                otherIcon = resource; // Possibly runOnUiThread()
+            }
+        });
+    }
+
+    private void sendMessageToDB(String message) {
+        //send message to messages, get id, then send message id to chat messages
+        ee.ounapuu.herman.messenger.CustomObjects.Message completeMessage =
+                new ee.ounapuu.herman.messenger.CustomObjects.Message(
+                        false,
+                        message,
+                        "",
+                        System.currentTimeMillis(),
+                        mAuth.getCurrentUser().getUid());
+        String messageID;
+        DatabaseReference dbRefMessages = database.getReference("messages");
+        DatabaseReference newRef = dbRefMessages.push();
+        messageID = newRef.getKey();
+        Toast.makeText(getContext(), messageID, Toast.LENGTH_SHORT).show();
+        newRef.setValue(completeMessage);
+
+        DatabaseReference dbRefTopic = database.getReference("/topics/"+chatTopic+"/");
+        dbRefTopic.child("messages").push().setValue(messageID);
+    }
+
+
 }

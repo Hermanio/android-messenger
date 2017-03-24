@@ -241,7 +241,7 @@ public class CreateTopicFragment extends Fragment implements View.OnClickListene
                 Toast.makeText(getContext(), "Upload done, trying save", Toast.LENGTH_SHORT).show();
 
                 List<String> participants = new ArrayList<String>();
-                List<Message> messages = new ArrayList<Message>();
+                List<String> messages = new ArrayList<String>();
                 participants.add(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
                 Topic topic = new Topic(topicName, participants, messages, topicName + ".jpg");
@@ -251,11 +251,6 @@ public class CreateTopicFragment extends Fragment implements View.OnClickListene
                 Toast.makeText(getContext(), "Tried sending messge", Toast.LENGTH_SHORT).show();
 
                 ((MainActivity)getActivity()).changeToChatView(topicName);
-
-
-
-
-
 
             }
         });

@@ -15,6 +15,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserInfo;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import ee.ounapuu.herman.messenger.CustomObjects.User;
 
 import static ee.ounapuu.herman.messenger.R.id.register_email;
 
@@ -25,8 +30,11 @@ import static ee.ounapuu.herman.messenger.R.id.register_email;
 public class RegisterActivity extends Activity {
 
     private FirebaseAuth mAuth;
-
     private FirebaseAuth.AuthStateListener mAuthListener;
+
+    private FirebaseDatabase database;
+    private DatabaseReference dbRef;
+
     private EditText email;
     private EditText password;
 
@@ -35,7 +43,9 @@ public class RegisterActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-     setupFireBaseAuth();
+        setupFireBaseAuth();
+        database = FirebaseDatabase.getInstance();
+        dbRef = database.getReference();
     }
 
     public void register(View view) {
@@ -52,6 +62,11 @@ public class RegisterActivity extends Activity {
 
                         } else {
                             //todo: add user info to db
+                            UserInfo userinfo = mAuth.getCurrentUser();
+                            Log.d("userdata", mAuth.getCurrentUser().getEmail());
+                            Log.d("userdata", mAuth.getCurrentUser().getUid());
+                            addNewUserInfoToDB(userinfo.getUid(), userinfo.getEmail(), userinfo.getDisplayName());
+
                             Intent i = new Intent(getApplicationContext(), MainActivity.class);
                             startActivity(i);
                             finish();
@@ -60,6 +75,11 @@ public class RegisterActivity extends Activity {
                 });
 
 
+    }
+
+    private void addNewUserInfoToDB(String uid, String userEmail, String username) {
+        User dbUserData = new User(uid, username, userEmail);
+        dbRef.child("users").child(uid).setValue(dbUserData);
     }
 
     private void setupFireBaseAuth() {

@@ -15,13 +15,13 @@ public class Message {
     public boolean isImage;
     public String textContent;
     public String imgRef;
-    public String timestamp;
+    public long timestamp;
     public String posterUID;
 
     public Message() {
     }
 
-    public Message(Boolean isImage, String textContent, String imgRef, String timestamp, String posterUID) {
+    public Message(Boolean isImage, String textContent, String imgRef, long timestamp, String posterUID) {
         this.isImage = isImage;
         this.textContent = textContent;
         this.imgRef = imgRef;

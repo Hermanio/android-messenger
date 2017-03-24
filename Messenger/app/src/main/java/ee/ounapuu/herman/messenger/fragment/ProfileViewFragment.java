@@ -237,7 +237,6 @@ public class ProfileViewFragment extends Fragment implements View.OnClickListene
 
     private void retrieveProfilePicture() {
         StorageReference uploadImageReference = mStorageRef.child(userId + ".jpg");
-        Log.d("dicks", "image retrieve");
         Glide.with(getContext()).using(new FirebaseImageLoader()).
                 load(uploadImageReference).
                 signature(new StringSignature(String.valueOf(System.currentTimeMillis())))

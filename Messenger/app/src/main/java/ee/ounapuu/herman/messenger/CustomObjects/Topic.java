@@ -10,16 +10,16 @@ public class Topic {
 
     public String title;
     public List<String> participants;
-    public List<Message> messages;
+    public List<String> messageIds;
     public String imgRef;
 
 
     public Topic() {}
 
-    public Topic(String title, List<String> participants, List<Message> messages, String imgRef) {
+    public Topic(String title, List<String> participants, List<String> messageIds, String imgRef) {
         this.title = title;
         this.participants = participants;
-        this.messages = messages;
+        this.messageIds = messageIds;
         this.imgRef = imgRef;
     }
 
