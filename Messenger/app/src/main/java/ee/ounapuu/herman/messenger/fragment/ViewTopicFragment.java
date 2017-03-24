@@ -17,6 +17,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import ee.ounapuu.herman.messenger.MainActivity;
 import ee.ounapuu.herman.messenger.R;
 import ee.ounapuu.herman.messenger.customListAdapter.CustomListAdapter;
 
@@ -47,8 +48,27 @@ public class ViewTopicFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        final View view = inflater.inflate(R.layout.fragment_view_topic, container, false);
+        View view = inflater.inflate(R.layout.fragment_view_topic, container, false);
         getAllTopicsQuery = mDatabase.child("topics").orderByKey();
+        setDataUpdateListener(view);
+        getAllTopicsQuery.addValueEventListener(dataUpdateListener);
+
+        return view;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        getAllTopicsQuery.removeEventListener(dataUpdateListener);
+        //Toast.makeText(getContext(), "on destroy view", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
+
+    private void setDataUpdateListener(final View view) {
         dataUpdateListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -80,6 +100,8 @@ public class ViewTopicFragment extends Fragment {
                         String selectedItem = itemname[+position];
                         Toast.makeText(getContext(), selectedItem, Toast.LENGTH_SHORT).show();
 
+                        ((MainActivity) getActivity()).changeToChatView(selectedItem);
+
                     }
                 });
             }
@@ -90,20 +112,5 @@ public class ViewTopicFragment extends Fragment {
 
             }
         };
-        getAllTopicsQuery.addValueEventListener(dataUpdateListener);
-
-        return view;
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        getAllTopicsQuery.removeEventListener(dataUpdateListener);
-        Toast.makeText(getContext(), "on destroy view", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
     }
 }

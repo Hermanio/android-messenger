@@ -138,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void signOut() {
-        Toast.makeText(this, "signout in activity", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "signout in activity", Toast.LENGTH_SHORT).show();
         mAuth.signOut();
     }
 
@@ -164,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
-                    Toast.makeText(MainActivity.this, user.getEmail(), Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(MainActivity.this, user.getEmail(), Toast.LENGTH_SHORT).show();
                 } else {
                     Intent i = new Intent(MainActivity.this, LoginActivity.class);
                     startActivity(i);

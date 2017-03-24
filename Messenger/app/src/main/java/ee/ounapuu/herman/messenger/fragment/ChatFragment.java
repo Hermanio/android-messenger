@@ -83,6 +83,7 @@ public class ChatFragment extends Fragment {
                 //Toast.makeText(getContext(), chatTopic, Toast.LENGTH_SHORT).show();
             } else {
                 displayErrorMessage();
+
             }
         } else {
             displayErrorMessage();
@@ -111,7 +112,7 @@ public class ChatFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        Toast.makeText(getContext(), "onsavedinstancestate", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getContext(), "onsavedinstancestate", Toast.LENGTH_SHORT).show();
 
         outState.putString("topicName", chatTopic);
     }
@@ -127,8 +128,8 @@ public class ChatFragment extends Fragment {
 
         mChatView.setRightBubbleColor(ContextCompat.getColor(getContext(), R.color.green500));
         mChatView.setLeftBubbleColor(Color.WHITE);
-        mChatView.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.blueGray500));
-        mChatView.setSendButtonColor(ContextCompat.getColor(getContext(), R.color.cyan900));
+        mChatView.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.gray200));
+        mChatView.setSendButtonColor(ContextCompat.getColor(getContext(), R.color.blueGray500));
         mChatView.setSendIcon(R.drawable.ic_action_send);
         mChatView.setRightMessageTextColor(Color.WHITE);
         mChatView.setLeftMessageTextColor(Color.BLACK);
@@ -155,6 +156,11 @@ public class ChatFragment extends Fragment {
     }
 
     private void sendMessage() {
+        if (chatTopic == null) {
+            Toast.makeText(getContext(), "Messaging is unavailable.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         //User id
         //todo: see if this needs replacing
         int myId = 0;
@@ -175,38 +181,24 @@ public class ChatFragment extends Fragment {
         final User me = new User(myId, myName, myIcon);
         //final User you = new User(yourId, yourName, yourIcon);
 
-        Message message = new Message.Builder()
-                .setUser(me)
-                .setRightMessage(true)
-                .setMessageText(mChatView.getInputText())
-                .hideIcon(true)
-                .build();
-        //Set to chat view
-        mChatView.send(message);
-        sendMessageToDB(mChatView.getInputText());
-        //Reset edit text
-        mChatView.setInputText("");
+        if (mChatView.getInputText()!=null) {
+            Message message = new Message.Builder()
+                    .setUser(me)
+                    .setRightMessage(true)
+                    .setMessageText(mChatView.getInputText())
+                    .hideIcon(true)
+                    .build();
+            //Set to chat view
+            mChatView.send(message);
+            sendMessageToDB(mChatView.getInputText());
+            //Reset edit text
+            mChatView.setInputText("");
 
-        //Receive message
-        // final Message receivedMessage = new Message.Builder()
-        //        .setUser(you)
-        //        .setRightMessage(false)
-        //        .setMessageText(ChatBot.talk(me.getName(), message.getMessageText()))
-        //        .build();
+            receiveMessage();
+        } else {
+            Toast.makeText(getContext(), "Please enter a message!", Toast.LENGTH_SHORT).show();
+        }
 
-        // This is a demo bot
-        // Return within 3 seconds
-        // int sendDelay = (new Random().nextInt(4) + 1) * 1000;
-        // new Handler().postDelayed(new Runnable() {
-        //     @Override
-        //     public void run() {
-        //          mChatView.receive(receivedMessage);
-        //      }
-        //  }, sendDelay);
-
-        //get necessary info, send to GUI and DB at same time
-        //todo: remove and replace with listener
-        receiveMessage();
     }
 
     private void receiveMessage() {
@@ -224,7 +216,7 @@ public class ChatFragment extends Fragment {
     }
 
     private void displayErrorMessage() {
-        Toast.makeText(getContext(), "Please choose or create a topic first!", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getContext(), "Please choose or create a topic first!", Toast.LENGTH_SHORT).show();
     }
 
     private void getImageForUser(String username) {
@@ -268,7 +260,7 @@ public class ChatFragment extends Fragment {
         DatabaseReference dbRefMessages = database.getReference("messages");
         DatabaseReference newRef = dbRefMessages.push();
         messageID = newRef.getKey();
-        Toast.makeText(getContext(), messageID, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getContext(), messageID, Toast.LENGTH_SHORT).show();
         newRef.setValue(completeMessage);
 
         DatabaseReference dbRefTopic = database.getReference("/topics/" + chatTopic + "/");

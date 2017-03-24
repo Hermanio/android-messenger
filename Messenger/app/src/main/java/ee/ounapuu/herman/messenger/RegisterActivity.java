@@ -49,13 +49,20 @@ public class RegisterActivity extends Activity {
     public void register(View view) {
         email = (EditText) findViewById(R.id.register_email);
         password = (EditText) findViewById(R.id.register_password);
+        if (email.getText().equals("") || password.getText().equals("")) {
+            Toast.makeText(this, "Please fill all the fields.", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
+        if (password.getText().length() < 6) {
+            Toast.makeText(this, "Password must be at least 6 characters!", Toast.LENGTH_SHORT).show();
+        }
         mAuth.createUserWithEmailAndPassword(email.getText().toString(), password.getText().toString())
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (!task.isSuccessful()) {
-                            Toast.makeText(RegisterActivity.this, "Authentication not successful",
+                            Toast.makeText(RegisterActivity.this, "Registration has failed.",
                                     Toast.LENGTH_SHORT).show();
 
                         } else {

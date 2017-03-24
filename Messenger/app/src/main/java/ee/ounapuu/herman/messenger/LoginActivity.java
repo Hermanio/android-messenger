@@ -36,6 +36,15 @@ public class LoginActivity extends Activity {
         EditText email = (EditText) findViewById(R.id.login_email);
         EditText password = (EditText) findViewById(R.id.login_password);
 
+        if (email.getText().equals("") || password.getText().equals("")) {
+            Toast.makeText(this, "Please fill all the fields.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (password.getText().length() < 6) {
+            Toast.makeText(this, "Password must be at least 6 characters!", Toast.LENGTH_SHORT).show();
+        }
+
         mAuth.signInWithEmailAndPassword(email.getText().toString(), password.getText().toString())
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -47,7 +56,7 @@ public class LoginActivity extends Activity {
                         // signed in user can be handled in the listener.
                         if (!task.isSuccessful()) {
                             // Log.w(TAG, "signInWithEmail:failed", task.getException());
-                            Toast.makeText(LoginActivity.this, "Auth has failed",
+                            Toast.makeText(LoginActivity.this, "Login failed.",
                                     Toast.LENGTH_SHORT).show();
                         } else {
                             //Toast.makeText(getApplicationContext(), "Add actual login", Toast.LENGTH_SHORT).show();
@@ -80,7 +89,7 @@ public class LoginActivity extends Activity {
                     startActivity(i);
                     finish();
                 } else {
-                    Toast.makeText(LoginActivity.this, "user is logged out", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(LoginActivity.this, "user is logged out", Toast.LENGTH_SHORT).show();
                 }
             }
         };

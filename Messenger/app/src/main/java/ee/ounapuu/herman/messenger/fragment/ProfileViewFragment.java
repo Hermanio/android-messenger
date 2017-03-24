@@ -116,11 +116,11 @@ public class ProfileViewFragment extends Fragment implements View.OnClickListene
     public void chooseImageFromCamera(View view) {
         Intent takePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         startActivityForResult(takePhotoIntent, REQUEST_CAMERA);
-        Toast.makeText(getContext(), "Choosing img from camera", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getContext(), "Choosing img from camera", Toast.LENGTH_SHORT).show();
     }
 
     public void chooseImageFromGallery(View view) {
-        Toast.makeText(getContext(), "Choose img from gallery", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getContext(), "Choose img from gallery", Toast.LENGTH_SHORT).show();
 
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_STORAGE_PERMISSION);
@@ -203,7 +203,7 @@ public class ProfileViewFragment extends Fragment implements View.OnClickListene
 
     private void uploadImageToStorage(Bitmap image) {
         //todo replace with topic name
-        Toast.makeText(getContext(), userId, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getContext(), userId, Toast.LENGTH_SHORT).show();
         StorageReference uploadImageReference = mStorageRef.child(userId + ".jpg");
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();

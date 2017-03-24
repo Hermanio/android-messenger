@@ -52,8 +52,6 @@ public class CustomListAdapter extends ArrayAdapter<String> {
     private void setIconToItem(String topic, ImageView imageView) {
         StorageReference imgRef = mStorageRef.child(topic + ".jpg");
         Glide.with(getContext()).using(new FirebaseImageLoader()).
-                load(imgRef).
-                signature(new StringSignature(String.valueOf(System.currentTimeMillis())))
-                .into(imageView);
+                load(imgRef).into(imageView);
     }
 }
