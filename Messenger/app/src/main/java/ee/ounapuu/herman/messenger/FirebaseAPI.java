@@ -16,7 +16,7 @@ public class FirebaseAPI {
         return firebaseAPI;
     }
 
-    protected static void demoMethod( ) {
+    protected static void demoMethod() {
         System.out.println("demoMethod for singleton");
     }
 

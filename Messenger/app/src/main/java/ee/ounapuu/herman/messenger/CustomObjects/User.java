@@ -2,8 +2,6 @@ package ee.ounapuu.herman.messenger.CustomObjects;
 
 import com.google.firebase.database.IgnoreExtraProperties;
 
-import java.util.List;
-
 /**
  * Created by toks on 3/23/17.
  */
@@ -17,7 +15,8 @@ public class User {
     public String email;
 
 
-    public User() {}
+    public User() {
+    }
 
     public User(String uid, String name, String email) {
         this.uid = uid;

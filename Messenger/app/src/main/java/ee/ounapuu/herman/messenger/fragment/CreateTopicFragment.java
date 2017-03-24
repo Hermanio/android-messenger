@@ -9,13 +9,11 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,10 +36,8 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
-import ee.ounapuu.herman.messenger.CustomObjects.Message;
 import ee.ounapuu.herman.messenger.CustomObjects.Topic;
 import ee.ounapuu.herman.messenger.MainActivity;
 import ee.ounapuu.herman.messenger.R;
@@ -233,11 +229,6 @@ public class CreateTopicFragment extends Fragment implements View.OnClickListene
                 //createNewTopic(newTopicName.getText().toString());
                 //todo: push data to DB, if successful then go to that new topic
 
-                //needed: topicname,
-                // participants list
-                //              |
-                //              |--- user uid
-                // messages list
                 Toast.makeText(getContext(), "Upload done, trying save", Toast.LENGTH_SHORT).show();
 
                 List<String> participants = new ArrayList<String>();
@@ -250,7 +241,7 @@ public class CreateTopicFragment extends Fragment implements View.OnClickListene
                 changeTopicPicture(topicName);
                 Toast.makeText(getContext(), "Tried sending messge", Toast.LENGTH_SHORT).show();
 
-                ((MainActivity)getActivity()).changeToChatView(topicName);
+                ((MainActivity) getActivity()).changeToChatView(topicName);
 
             }
         });

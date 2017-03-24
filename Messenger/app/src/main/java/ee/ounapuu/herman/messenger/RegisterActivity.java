@@ -21,8 +21,6 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import ee.ounapuu.herman.messenger.CustomObjects.User;
 
-import static ee.ounapuu.herman.messenger.R.id.register_email;
-
 /**
  * Created by toks on 3/19/17.
  */

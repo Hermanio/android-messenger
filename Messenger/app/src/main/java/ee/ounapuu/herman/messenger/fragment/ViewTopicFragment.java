@@ -1,17 +1,21 @@
 package ee.ounapuu.herman.messenger.fragment;
 
 import android.app.Fragment;
-import android.app.ListFragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import java.util.List;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import ee.ounapuu.herman.messenger.R;
 import ee.ounapuu.herman.messenger.customListAdapter.CustomListAdapter;
@@ -22,55 +26,10 @@ import ee.ounapuu.herman.messenger.customListAdapter.CustomListAdapter;
 
 public class ViewTopicFragment extends Fragment {
     ListView list;
-    String[] itemname ={
-            "Safari",
-            "Camera",
-            "Safari",
-            "Camera",
-            "Safari",
-            "Camera",
-            "Safari",
-            "Safari",
-            "Camera",
-            "Safari",
-            "Camera",
-            "Safari",
-            "Camera",
-            "Safari",
-            "Safari",
-            "Camera",
-            "Safari",
-            "Camera",
-            "Safari",
-            "Camera",
-            "Safari",
-            "Camera"
-    };
-
-    Integer[] imgid={
-            R.drawable.pic1,
-            R.drawable.pic2,
-            R.drawable.pic1,
-            R.drawable.pic2,
-            R.drawable.pic1,
-            R.drawable.pic2,
-            R.drawable.pic1,
-            R.drawable.pic1,
-            R.drawable.pic2,
-            R.drawable.pic1,
-            R.drawable.pic2,
-            R.drawable.pic1,
-            R.drawable.pic2,
-            R.drawable.pic1,
-            R.drawable.pic1,
-            R.drawable.pic2,
-            R.drawable.pic1,
-            R.drawable.pic2,
-            R.drawable.pic1,
-            R.drawable.pic2,
-            R.drawable.pic1,
-            R.drawable.pic2
-    };
+    String[] itemname;
+    private DatabaseReference mDatabase;
+    private Query getAllTopicsQuery;
+    private ValueEventListener dataUpdateListener;
 
     public static ViewTopicFragment newInstance() {
         ViewTopicFragment fragment = new ViewTopicFragment();
@@ -80,33 +39,66 @@ public class ViewTopicFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_view_topic, container, false);
-        CustomListAdapter adapter=new CustomListAdapter(getActivity(), itemname, imgid);
-        list=(ListView)view.findViewById(R.id.customlist);
-        list.setAdapter(adapter);
+        final View view = inflater.inflate(R.layout.fragment_view_topic, container, false);
+        getAllTopicsQuery = mDatabase.child("topics").orderByKey();
+        dataUpdateListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.d("length", "Length is " + dataSnapshot.getChildrenCount());
+                int iterator = 0;
+                itemname = new String[(int) dataSnapshot.getChildrenCount()];
+                for (DataSnapshot topicSnapShot : dataSnapshot.getChildren()) {
+                    Log.d("loop", topicSnapShot.getKey());
+                    itemname[iterator] = topicSnapShot.getKey();
+                    iterator++;
+                }
 
-        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                if (itemname != null) {
+                    Log.d("length", "Length is for array " + itemname.length);
+
+                }
+
+
+                CustomListAdapter adapter = new CustomListAdapter(getActivity(), itemname);
+
+                list = (ListView) view.findViewById(R.id.customlist);
+                list.setAdapter(adapter);
+
+                list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view,
+                                            int position, long id) {
+                        String selectedItem = itemname[+position];
+                        Toast.makeText(getContext(), selectedItem, Toast.LENGTH_SHORT).show();
+
+                    }
+                });
+            }
 
             @Override
-            public void onItemClick(AdapterView<?> parent, View view,
-                                    int position, long id) {
-                // TODO Auto-generated method stub
-                String Slecteditem= itemname[+position];
-                Toast.makeText(getContext(), Slecteditem, Toast.LENGTH_SHORT).show();
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w("loop", "loadPost:onCancelled", databaseError.toException());
 
             }
-        });
+        };
+        getAllTopicsQuery.addValueEventListener(dataUpdateListener);
+
         return view;
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        getAllTopicsQuery.removeEventListener(dataUpdateListener);
         Toast.makeText(getContext(), "on destroy view", Toast.LENGTH_SHORT).show();
     }
 

@@ -4,7 +4,6 @@ import android.app.Fragment;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
@@ -21,9 +20,6 @@ import com.github.bassaer.chatmessageview.models.Message;
 import com.github.bassaer.chatmessageview.models.User;
 import com.github.bassaer.chatmessageview.views.ChatView;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -275,7 +271,7 @@ public class ChatFragment extends Fragment {
         Toast.makeText(getContext(), messageID, Toast.LENGTH_SHORT).show();
         newRef.setValue(completeMessage);
 
-        DatabaseReference dbRefTopic = database.getReference("/topics/"+chatTopic+"/");
+        DatabaseReference dbRefTopic = database.getReference("/topics/" + chatTopic + "/");
         dbRefTopic.child("messages").push().setValue(messageID);
     }
 

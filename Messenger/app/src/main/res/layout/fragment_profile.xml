@@ -34,6 +34,7 @@
                 android:layout_below="@+id/profileUsernameText"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="20dp"
+                android:background="@drawable/ic_person_black_180dp_img_placeholder"
                 android:saveEnabled="false"
                 android:src="@drawable/ic_person_black_180dp_img_placeholder" />
 

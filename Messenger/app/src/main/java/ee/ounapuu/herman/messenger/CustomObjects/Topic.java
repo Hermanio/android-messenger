@@ -14,7 +14,8 @@ public class Topic {
     public String imgRef;
 
 
-    public Topic() {}
+    public Topic() {
+    }
 
     public Topic(String title, List<String> participants, List<String> messageIds, String imgRef) {
         this.title = title;
