@@ -8,7 +8,16 @@
     android:configChanges="keyboardHidden|orientation|screenSize"
     >
 
-<com.github.bassaer.chatmessageview.views.ChatView
+    <TextView
+        android:id="@+id/chat_topic_textview"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:gravity="center_vertical|center_horizontal"
+        android:text="@string/chat_name_placeholder"
+        android:textAppearance="@android:style/TextAppearance.Material"
+        android:textSize="30sp" />
+
+    <com.github.bassaer.chatmessageview.views.ChatView
     android:id="@+id/chat_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"/>

@@ -101,6 +101,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
     private void setLastOpenedFragment(int fragmentId) {
         SharedPreferences prefs = getPreferences(MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
@@ -111,6 +112,19 @@ public class MainActivity extends AppCompatActivity {
     private int getLastOpenedFragment() {
         SharedPreferences prefs = getPreferences(MODE_PRIVATE);
         return prefs.getInt("lastOpenedFragment", R.id.navigation_view_topic);
+    }
+
+    public void changeToChatView(String topicName) {
+        Fragment fragment = getFragmentManager().findFragmentById(R.id.chat_view);
+        if (fragment==null) {
+            fragment = new ChatFragment();
+        }
+        Bundle bundle = new Bundle();
+        bundle.putString("topicName", topicName);
+        fragment.setArguments(bundle);
+
+        getFragmentManager().beginTransaction().replace(R.id.frame_layout, fragment).commit();
+        bottomNavigationView.getMenu().getItem(1).setChecked(true);
     }
 
     @Override

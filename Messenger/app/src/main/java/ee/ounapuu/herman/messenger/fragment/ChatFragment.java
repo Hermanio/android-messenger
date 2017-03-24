@@ -12,6 +12,7 @@ import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.bassaer.chatmessageview.models.Message;
@@ -21,6 +22,8 @@ import com.github.bassaer.chatmessageview.views.ChatView;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import org.w3c.dom.Text;
+
 import java.util.Random;
 
 import ee.ounapuu.herman.messenger.R;
@@ -29,13 +32,16 @@ import ee.ounapuu.herman.messenger.R;
  * Created by toks on 3/19/17.
  */
 
-public class ChatFragment extends Fragment{
+public class ChatFragment extends Fragment {
 
     private ChatView mChatView;
 
-   private  FirebaseDatabase database = FirebaseDatabase.getInstance();
+
+    private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference myRef = database.getReference("message");
 
+    private String chatTopic;
+    private TextView chatTitle;
 
 
     public static ChatFragment newInstance() {
@@ -57,6 +63,19 @@ public class ChatFragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_chat, container, false);
+        chatTitle = (TextView) view.findViewById(R.id.chat_topic_textview);
+        if (getArguments() != null) {
+            if (getArguments().getString("topicName") != null) {
+                chatTopic = getArguments().getString("topicName");
+                chatTitle.setText(chatTopic);
+                //Toast.makeText(getContext(), chatTopic, Toast.LENGTH_SHORT).show();
+            } else {
+                displayErrorMessage();
+            }
+        } else {
+            displayErrorMessage();
+        }
+
         return view;
     }
 
@@ -156,5 +175,9 @@ public class ChatFragment extends Fragment{
 
     private void receiveMessage() {
         //create using db listener, if own message, ignore
+    }
+
+    private void displayErrorMessage() {
+        Toast.makeText(getContext(), "Please choose or create a topic first!", Toast.LENGTH_SHORT).show();
     }
 }

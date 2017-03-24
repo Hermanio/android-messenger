@@ -12,8 +12,10 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,8 +24,12 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.signature.StringSignature;
+import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -31,8 +37,13 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
+import ee.ounapuu.herman.messenger.CustomObjects.Message;
+import ee.ounapuu.herman.messenger.CustomObjects.Topic;
+import ee.ounapuu.herman.messenger.MainActivity;
 import ee.ounapuu.herman.messenger.R;
 
 import static android.app.Activity.RESULT_OK;
@@ -55,6 +66,8 @@ public class CreateTopicFragment extends Fragment implements View.OnClickListene
 
     private ImageView newTopicImage;
     private EditText newTopicName;
+    private Button addTopicButton;
+    private BottomNavigationView bottomNavigationView;
 
     public static CreateTopicFragment newInstance() {
         CreateTopicFragment fragment = new CreateTopicFragment();
@@ -70,7 +83,6 @@ public class CreateTopicFragment extends Fragment implements View.OnClickListene
         dbRef = database.getReference();
         //dbRef.child("topics").child("thisistopic").child("somevaluesinlistorsth").setValue("dunno some stuff i guess");
 
-
     }
 
     @Override
@@ -80,6 +92,10 @@ public class CreateTopicFragment extends Fragment implements View.OnClickListene
 
         newTopicImage = (ImageView) view.findViewById(R.id.newTopicImageView);
         newTopicName = (EditText) view.findViewById(R.id.new_topic_name);
+        addTopicButton = (Button) view.findViewById(R.id.button_add_new_topic);
+        addTopicButton.setOnClickListener(this);
+
+        //bottomNavigationView = (BottomNavigationView) view.findViewById(R.id.navigation);
 
         Button cameraImagePickerButton = (Button) view.findViewById(R.id.chooseImageFromCameraButton);
         cameraImagePickerButton.setOnClickListener(this);
@@ -152,7 +168,7 @@ public class CreateTopicFragment extends Fragment implements View.OnClickListene
                 Bitmap image = (Bitmap) data.getExtras().get("data");
                 uploadReadyImage = image;
                 newTopicImage.setImageBitmap(image);
-               // uploadImageToStorage(image);
+                // uploadImageToStorage(image);
             } else if (requestCode == SELECT_FILE) {
                 Uri selectedImageUri = data.getData();
                 String imagePath = getRealPathFromUri(selectedImageUri);
@@ -160,7 +176,7 @@ public class CreateTopicFragment extends Fragment implements View.OnClickListene
                 uploadReadyImage = image;
                 newTopicImage.setImageBitmap(image);
 
-               // uploadImageToStorage(image);
+                // uploadImageToStorage(image);
 
             }
         }
@@ -189,16 +205,14 @@ public class CreateTopicFragment extends Fragment implements View.OnClickListene
                 chooseImageFromGallery(view);
                 break;
             case R.id.button_add_new_topic:
-                //todo: create new topic here
-                //first upload image
-                //then save info to DB
                 createNewTopic(uploadReadyImage, newTopicName.getText().toString());
                 break;
         }
     }
 
-    private void createNewTopic(Bitmap image, String topicName) {
+    private void createNewTopic(Bitmap image, final String topicName) {
         //todo replace with topic name
+        Toast.makeText(getContext(), "New topic create start", Toast.LENGTH_SHORT).show();
         StorageReference uploadImageReference = mStorageRef.child(topicName + ".jpg");
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -219,11 +233,40 @@ public class CreateTopicFragment extends Fragment implements View.OnClickListene
                 //createNewTopic(newTopicName.getText().toString());
                 //todo: push data to DB, if successful then go to that new topic
 
+                //needed: topicname,
+                // participants list
+                //              |
+                //              |--- user uid
+                // messages list
+                Toast.makeText(getContext(), "Upload done, trying save", Toast.LENGTH_SHORT).show();
+
+                List<String> participants = new ArrayList<String>();
+                List<Message> messages = new ArrayList<Message>();
+                participants.add(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+                Topic topic = new Topic(topicName, participants, messages, topicName + ".jpg");
+
+                dbRef.child("topics").child(topicName).setValue(topic);
+                changeTopicPicture(topicName);
+                Toast.makeText(getContext(), "Tried sending messge", Toast.LENGTH_SHORT).show();
+
+                ((MainActivity)getActivity()).changeToChatView(topicName);
+
+
+
+
+
 
             }
         });
 
     }
 
-
+    private void changeTopicPicture(String topicName) {
+        StorageReference uploadImageReference = mStorageRef.child(topicName + ".jpg");
+        Glide.with(getContext()).using(new FirebaseImageLoader()).
+                load(uploadImageReference).
+                signature(new StringSignature(String.valueOf(System.currentTimeMillis())))
+                .into(newTopicImage);
+    }
 }

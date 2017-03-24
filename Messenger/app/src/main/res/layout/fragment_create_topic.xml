@@ -54,6 +54,8 @@
         android:layout_below="@+id/chooseImageFromGalleryButton"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="23dp"
+        android:onClick="create"
+
         android:text="Add new topic" />
 </RelativeLayout>
 

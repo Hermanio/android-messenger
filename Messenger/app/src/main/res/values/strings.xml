@@ -16,4 +16,5 @@
     <string name="choose_image_from_gallery">Choose image from gallery</string>
     <string name="hint_topic_name">Topic name</string>
     <string name="enter_topic_name">Enter topic name</string>
+    <string name="chat_name_placeholder">No chat chosen</string>
 </resources>
