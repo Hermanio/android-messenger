@@ -38,7 +38,9 @@ import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import ee.ounapuu.herman.messenger.ChatActivity;
 import ee.ounapuu.herman.messenger.CustomObjects.Topic;
+import ee.ounapuu.herman.messenger.LoginActivity;
 import ee.ounapuu.herman.messenger.MainActivity;
 import ee.ounapuu.herman.messenger.R;
 
@@ -233,24 +235,22 @@ public class CreateTopicFragment extends Fragment implements View.OnClickListene
         }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                //Toast.makeText(getContext(), downloadUrl.toString(), Toast.LENGTH_SHORT).show();
-                //createNewTopic(newTopicName.getText().toString());
-                //todo: push data to DB, if successful then go to that new topic
-
-                //Toast.makeText(getContext(), "Upload done, trying save", Toast.LENGTH_SHORT).show();
 
                 List<String> participants = new ArrayList<String>();
                 List<String> messages = new ArrayList<String>();
                 participants.add(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
-                Topic topic = new Topic(topicName, participants, messages, topicName + ".jpg");
+                Topic topic = new Topic(topicName, participants, messages, topicName + ".jpg", false);
 
                 dbRef.child("topics").child(topicName).setValue(topic);
                 changeTopicPicture(topicName);
                 //Toast.makeText(getContext(), "Tried sending messge", Toast.LENGTH_SHORT).show();
 
-                ((MainActivity) getActivity()).changeToChatView(topicName);
-
+                //((MainActivity) getActivity()).changeToChatView(topicName);
+                //todo: open ChatActivity with proper data
+                Intent i = new Intent(getActivity(), ChatActivity.class);
+                i.putExtra("topicName", topicName);
+                startActivity(i);
             }
         });
 

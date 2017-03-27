@@ -1,6 +1,7 @@
 package ee.ounapuu.herman.messenger.fragment;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,6 +18,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import ee.ounapuu.herman.messenger.ChatActivity;
 import ee.ounapuu.herman.messenger.MainActivity;
 import ee.ounapuu.herman.messenger.R;
 import ee.ounapuu.herman.messenger.customListAdapter.CustomListAdapter;
@@ -26,8 +28,10 @@ import ee.ounapuu.herman.messenger.customListAdapter.CustomListAdapter;
  */
 
 public class ViewTopicFragment extends Fragment {
+
     ListView list;
     String[] itemname;
+
     private DatabaseReference mDatabase;
     private Query getAllTopicsQuery;
     private ValueEventListener dataUpdateListener;
@@ -98,9 +102,11 @@ public class ViewTopicFragment extends Fragment {
                     public void onItemClick(AdapterView<?> parent, View view,
                                             int position, long id) {
                         String selectedItem = itemname[+position];
-                        Toast.makeText(getContext(), selectedItem, Toast.LENGTH_SHORT).show();
+                       // Toast.makeText(getContext(), selectedItem, Toast.LENGTH_SHORT).show();
 
-                        ((MainActivity) getActivity()).changeToChatView(selectedItem);
+                        Intent i = new Intent(getActivity(), ChatActivity.class);
+                        i.putExtra("topicName", selectedItem);
+                        startActivity(i);
 
                     }
                 });

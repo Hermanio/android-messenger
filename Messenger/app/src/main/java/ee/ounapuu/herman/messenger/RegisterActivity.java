@@ -49,7 +49,7 @@ public class RegisterActivity extends Activity {
     public void register(View view) {
         email = (EditText) findViewById(R.id.register_email);
         password = (EditText) findViewById(R.id.register_password);
-        if (email.getText().equals("") || password.getText().equals("")) {
+        if (email.getText().toString().equals("") || password.getText().toString().equals("")) {
             Toast.makeText(this, "Please fill all the fields.", Toast.LENGTH_SHORT).show();
             return;
         }

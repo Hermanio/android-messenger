@@ -12,16 +12,18 @@ public class Topic {
     public List<String> participants;
     public List<String> messageIds;
     public String imgRef;
+    public boolean isStaticTopic;
 
 
     public Topic() {
     }
 
-    public Topic(String title, List<String> participants, List<String> messageIds, String imgRef) {
+    public Topic(String title, List<String> participants, List<String> messageIds, String imgRef, boolean isStaticTopic) {
         this.title = title;
         this.participants = participants;
         this.messageIds = messageIds;
         this.imgRef = imgRef;
+        this.isStaticTopic = isStaticTopic;
     }
 
 }

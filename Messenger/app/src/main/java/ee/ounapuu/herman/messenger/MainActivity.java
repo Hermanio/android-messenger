@@ -48,9 +48,6 @@ public class MainActivity extends AppCompatActivity {
 
                 if (fragment == null) {
                     switch (selectedMenuOption) {
-                        case R.id.navigation_chat:
-                            fragment = new ChatFragment();
-                            break;
                         case R.id.navigation_create_topic:
                             fragment = new CreateTopicFragment();
                             break;
@@ -74,10 +71,6 @@ public class MainActivity extends AppCompatActivity {
         Fragment fragment = getFragmentManager().findFragmentById(getLastOpenedFragment());
         if (fragment == null) {
             switch (getLastOpenedFragment()) {
-                case R.id.navigation_chat:
-                    fragment = new ChatFragment();
-                    bottomNavigationView.getMenu().getItem(1).setChecked(true);
-                    break;
                 case R.id.navigation_create_topic:
                     fragment = new CreateTopicFragment();
                     bottomNavigationView.getMenu().getItem(2).setChecked(true);
@@ -115,9 +108,7 @@ public class MainActivity extends AppCompatActivity {
         if (fragment == null) {
             fragment = new ChatFragment();
         }
-        Bundle bundle = new Bundle();
-        bundle.putString("topicName", topicName);
-        fragment.setArguments(bundle);
+
 
         getFragmentManager().beginTransaction().replace(R.id.frame_layout, fragment).commit();
         bottomNavigationView.getMenu().getItem(1).setChecked(true);

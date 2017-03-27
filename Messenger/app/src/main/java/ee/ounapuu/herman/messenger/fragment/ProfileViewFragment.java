@@ -50,7 +50,6 @@ public class ProfileViewFragment extends Fragment implements View.OnClickListene
     private StorageReference mStorageRef;
     private FirebaseUser user;
 
-
     private String userName;
     private String userEmail;
     private Uri photoUrl;
@@ -173,7 +172,6 @@ public class ProfileViewFragment extends Fragment implements View.OnClickListene
 
             }
         }
-
     }
 
     private String getRealPathFromUri(Uri contentUri) {

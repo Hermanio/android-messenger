@@ -1,11 +1,11 @@
-package ee.ounapuu.herman.messenger.fragment;
+package ee.ounapuu.herman.messenger;
 
-import android.app.Fragment;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,13 +25,12 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-import ee.ounapuu.herman.messenger.R;
-
 /**
- * Created by toks on 3/19/17.
+ * Created by toks on 27.03.17.
  */
 
-public class ChatFragment extends Fragment {
+public class ChatActivity extends AppCompatActivity {
+
 
     private ChatView mChatView;
 
@@ -53,67 +52,39 @@ public class ChatFragment extends Fragment {
 
     private String uid;
 
-    public static ChatFragment newInstance() {
-        ChatFragment fragment = new ChatFragment();
-        return fragment;
-    }
-
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_chat);
+
         mStorageRef = FirebaseStorage.getInstance().getReference();
 
-        //database.getReference("message").setValue("message one value");
-        //database.getReference("message/moar").setValue("moar messages");
 
-
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_chat, container, false);
-        chatTitle = (TextView) view.findViewById(R.id.chat_topic_textview);
-        if (getArguments() != null) {
-            if (getArguments().getString("topicName") != null) {
-                chatTopic = getArguments().getString("topicName");
-                chatTitle.setText(chatTopic);
-                dbRef = database.getReference("/topics/" + chatTopic + "/");
-                //dbRef.child("messages").push().setValue("test message please ignore");
-                //Toast.makeText(getContext(), chatTopic, Toast.LENGTH_SHORT).show();
-            } else {
-                displayErrorMessage();
-
-            }
+        String newString;
+        Bundle extras = getIntent().getExtras();
+        if (extras == null) {
+            newString = "Chat not available";
         } else {
-            displayErrorMessage();
+            newString = extras.getString("topicName");
+            chatTopic = newString;
         }
-
-        return view;
-    }
-
-
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+        chatTitle = (TextView) findViewById(R.id.chat_topic_textview);
+        chatTitle.setText(newString);
 
         setupChatView();
 
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-
-        //remove listeners so that we dont get memleaks
+    protected void onDestroy() {
+        super.onDestroy();
         mChatView.setOnClickSendButtonListener(null);
+
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        //Toast.makeText(getContext(), "onsavedinstancestate", Toast.LENGTH_SHORT).show();
-
         outState.putString("topicName", chatTopic);
     }
 
@@ -122,13 +93,13 @@ public class ChatFragment extends Fragment {
 
 
         if (mChatView == null) {
-            mChatView = (ChatView) getView().findViewById(R.id.chat_view);
+            mChatView = (ChatView) findViewById(R.id.chat_view);
         }
 
-        mChatView.setRightBubbleColor(ContextCompat.getColor(getContext(), R.color.green500));
+        mChatView.setRightBubbleColor(ContextCompat.getColor(this, R.color.green500));
         mChatView.setLeftBubbleColor(Color.WHITE);
-        mChatView.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.gray200));
-        mChatView.setSendButtonColor(ContextCompat.getColor(getContext(), R.color.blueGray500));
+        mChatView.setBackgroundColor(ContextCompat.getColor(this, R.color.blueGray200));
+        mChatView.setSendButtonColor(ContextCompat.getColor(this, R.color.blueGray500));
         mChatView.setSendIcon(R.drawable.ic_action_send);
         mChatView.setRightMessageTextColor(Color.WHITE);
         mChatView.setLeftMessageTextColor(Color.BLACK);
@@ -156,19 +127,16 @@ public class ChatFragment extends Fragment {
 
     private void sendMessage() {
         if (chatTopic == null) {
-            Toast.makeText(getContext(), "Messaging is unavailable.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Messaging is unavailable.", Toast.LENGTH_SHORT).show();
             return;
         }
 
         //User id
         //todo: see if this needs replacing
         int myId = 0;
+
         //User icon
         getImageForUser(mAuth.getCurrentUser().getUid());
-
-        //.signature(new StringSignature(String.valueOf(System.currentTimeMillis())))
-        ;
-        //User name
 
         //todo: replace with user display name
         String myName = mAuth.getCurrentUser().getEmail();
@@ -180,7 +148,7 @@ public class ChatFragment extends Fragment {
         final User me = new User(myId, myName, myIcon);
         //final User you = new User(yourId, yourName, yourIcon);
 
-        if (mChatView.getInputText()!=null) {
+        if (mChatView.getInputText() != null) {
             Message message = new Message.Builder()
                     .setUser(me)
                     .setRightMessage(true)
@@ -195,7 +163,7 @@ public class ChatFragment extends Fragment {
 
             receiveMessage();
         } else {
-            Toast.makeText(getContext(), "Please enter a message!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Please enter a message!", Toast.LENGTH_SHORT).show();
         }
 
     }
@@ -214,15 +182,11 @@ public class ChatFragment extends Fragment {
         mChatView.receive(message);
     }
 
-    private void displayErrorMessage() {
-        //Toast.makeText(getContext(), "Please choose or create a topic first!", Toast.LENGTH_SHORT).show();
-    }
-
     private void getImageForUser(String username) {
         String imagePath = username + ".jpg";
         StorageReference storageReference = mStorageRef.child((imagePath));
 
-        Glide.with(getContext()).using(new FirebaseImageLoader()).
+        Glide.with(this).using(new FirebaseImageLoader()).
                 load(storageReference).asBitmap().into(new SimpleTarget<Bitmap>(100, 100) {
             @Override
             public void onResourceReady(Bitmap resource, GlideAnimation glideAnimation) {
@@ -237,7 +201,7 @@ public class ChatFragment extends Fragment {
         String imagePath = "tfIBzXWgD4XnyG3y2IjD08SgHeq1.jpg";
         StorageReference storageReference = mStorageRef.child((imagePath));
 
-        Glide.with(getContext()).using(new FirebaseImageLoader()).
+        Glide.with(this).using(new FirebaseImageLoader()).
                 load(storageReference).asBitmap().into(new SimpleTarget<Bitmap>(100, 100) {
             @Override
             public void onResourceReady(Bitmap resource, GlideAnimation glideAnimation) {
@@ -265,6 +229,5 @@ public class ChatFragment extends Fragment {
         DatabaseReference dbRefTopic = database.getReference("/topics/" + chatTopic + "/");
         dbRefTopic.child("messages").push().setValue(messageID);
     }
-
 
 }

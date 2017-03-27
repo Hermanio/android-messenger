@@ -36,7 +36,7 @@ public class LoginActivity extends Activity {
         EditText email = (EditText) findViewById(R.id.login_email);
         EditText password = (EditText) findViewById(R.id.login_password);
 
-        if (email.getText().equals("") || password.getText().equals("")) {
+        if (email.getText().toString().equals("") || password.getText().toString().equals("")) {
             Toast.makeText(this, "Please fill all the fields.", Toast.LENGTH_SHORT).show();
             return;
         }
