@@ -6,9 +6,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.view.LayoutInflater;
+import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,14 +19,17 @@ import com.github.bassaer.chatmessageview.models.Message;
 import com.github.bassaer.chatmessageview.models.User;
 import com.github.bassaer.chatmessageview.views.ChatView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-/**
- * Created by toks on 27.03.17.
- */
+import java.util.ArrayList;
+
 
 public class ChatActivity extends AppCompatActivity {
 
@@ -67,12 +69,13 @@ public class ChatActivity extends AppCompatActivity {
         } else {
             newString = extras.getString("topicName");
             chatTopic = newString;
+            fetchMessageIDListFromChat(chatTopic);
+
         }
         chatTitle = (TextView) findViewById(R.id.chat_topic_textview);
         chatTitle.setText(newString);
 
         setupChatView();
-
     }
 
     @Override
@@ -230,4 +233,53 @@ public class ChatActivity extends AppCompatActivity {
         dbRefTopic.child("messages").push().setValue(messageID);
     }
 
+    private void fetchMessageIDListFromChat(String chatName) {
+        DatabaseReference topicMessageIdRef = database.getReference("/topics/"+chatName+"/messages/");
+
+        final ArrayList<String> messageIDList = new ArrayList<>();
+
+        Query getAllPosts = topicMessageIdRef;
+        getAllPosts.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                DatabaseReference allMessagesRef;
+                for (DataSnapshot messageId: dataSnapshot.getChildren()) {
+                    allMessagesRef =  database.getReference("/messages/"+messageId.getValue());
+
+                    //Log.d("messages", allMessagesRef.child("textContent"));
+                    Log.d("messages", messageId.getValue().toString());
+
+                    allMessagesRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            Log.d("messages", dataSnapshot.child("textContent").getValue().toString());
+                            Log.d("messages", dataSnapshot.child("timestamp").getValue().toString());
+                            Log.d("messages", dataSnapshot.child("posterUID").getValue().toString());
+
+                            //todo: get person data here in same manner
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+
+                    //messageIDList.add(messageId.getKey());
+                }
+                //getMessages(messageIDList);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void getMessages(ArrayList<String> messageIDs) {
+        for (String messageID : messageIDs) {
+           // Log.d("messages", allMessagesRef.getValue(messageID));
+        }
+    }
 }

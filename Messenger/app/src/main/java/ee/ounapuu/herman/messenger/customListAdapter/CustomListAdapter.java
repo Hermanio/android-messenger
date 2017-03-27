@@ -43,7 +43,10 @@ public class CustomListAdapter extends ArrayAdapter<String> {
         TextView extratxt = (TextView) rowView.findViewById(R.id.textView1);
 
         txtTitle.setText(itemname[position]);
+
+        //todo: replace with
         extratxt.setText("Placeholder description for topic " + itemname[position]);
+
         setIconToItem(itemname[position], imageView);
         return rowView;
 
