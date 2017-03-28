@@ -76,7 +76,7 @@ public class ChatActivity extends AppCompatActivity {
         } else {
             newString = extras.getString("topicName");
             chatTopic = newString;
-            fetchMessageIDListFromChat(chatTopic);
+            getMessages(chatTopic);
 
         }
         chatTitle = (TextView) findViewById(R.id.chat_topic_textview);
@@ -258,7 +258,7 @@ public class ChatActivity extends AppCompatActivity {
         //dbRefTopic.child("messages").push().setValue(messageID);
     }
 
-    private void fetchMessageIDListFromChat(String chatName) {
+    private void getMessages(String chatName) {
 
         Query getAllPosts = database.getReference("/messages/" + chatName);
 
@@ -275,7 +275,6 @@ public class ChatActivity extends AppCompatActivity {
                 Log.d("messages", dataSnapshot.child("posterName").getValue().toString());
                 Log.d("messages", dataSnapshot.child("timestamp").getValue().toString());
 
-                //todo: messagebuilder here
                 buildMessage(username, timestamp, textContent);
 
             }
