@@ -86,7 +86,7 @@ public class MessageView extends ListView implements View.OnFocusChangeListener{
 
         setAdapter(mMessageAdapter);
 
-        mHandler = new Handler();
+    /*    mHandler = new Handler();
         mRefreshTimer = new Timer(true);
         mRefreshTimer.schedule(new TimerTask() {
             @Override
@@ -98,7 +98,7 @@ public class MessageView extends ListView implements View.OnFocusChangeListener{
                     }
                 });
             }
-        }, 1000, mRefreshInterval);
+        }, 1000, mRefreshInterval);*/
     }
 
     /**

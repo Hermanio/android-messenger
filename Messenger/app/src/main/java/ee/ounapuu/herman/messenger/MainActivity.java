@@ -1,5 +1,6 @@
 package ee.ounapuu.herman.messenger;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -7,13 +8,18 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
+import java.util.TimerTask;
 
 import ee.ounapuu.herman.messenger.fragment.ChatFragment;
 import ee.ounapuu.herman.messenger.fragment.CreateTopicFragment;
@@ -25,6 +31,8 @@ public class MainActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
+
+    private static View targetView;
 
     private BottomNavigationView bottomNavigationView;
 

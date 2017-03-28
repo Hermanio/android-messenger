@@ -1,18 +1,28 @@
 package com.github.bassaer.chatmessageview.views.adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.os.Handler;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.IntentCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.TranslateAnimation;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.bassaer.chatmessageview.R;
 import com.github.bassaer.chatmessageview.models.Message;
@@ -20,6 +30,9 @@ import com.github.bassaer.chatmessageview.models.User;
 import com.github.bassaer.chatmessageview.views.RoundImageView;
 
 import java.util.ArrayList;
+import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -31,6 +44,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class MessageAdapter extends ArrayAdapter<Object> {
 
     private LayoutInflater mLayoutInflater;
+    private final Context context;
+
     private ArrayList<Object> mObjects;
     private ArrayList<Object> mViewTypes = new ArrayList<>();
 
@@ -58,7 +73,9 @@ public class MessageAdapter extends ArrayAdapter<Object> {
 
     public MessageAdapter(Context context, int resource, ArrayList<Object> objects) {
         super(context, resource, objects);
-        mLayoutInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        this.context = context;
+
+        mLayoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mObjects = objects;
         mViewTypes.add(String.class);
         mViewTypes.add(Message.class);
@@ -79,7 +96,7 @@ public class MessageAdapter extends ArrayAdapter<Object> {
 
     @SuppressWarnings("deprecation")
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         Object item = getItem(position);
 
         if (item instanceof String) {
@@ -156,13 +173,13 @@ public class MessageAdapter extends ArrayAdapter<Object> {
                 if (message.getMessageStatusType() == Message.MESSAGE_STATUS_ICON || message.getMessageStatusType() == Message.MESSAGE_STATUS_ICON_RIGHT_ONLY) {
                     //Show message status icon
                     View statusIcon = mLayoutInflater.inflate(R.layout.message_status_icon, holder.statusContainer);
-                    holder.statusIcon = (ImageView)statusIcon.findViewById(R.id.status_icon_image_view);
+                    holder.statusIcon = (ImageView) statusIcon.findViewById(R.id.status_icon_image_view);
                     holder.statusIcon.setImageDrawable(message.getStatusIcon());
                     setColorDrawable(mStatusColor, holder.statusIcon.getDrawable());
                 } else if (message.getMessageStatusType() == Message.MESSAGE_STATUS_TEXT || message.getMessageStatusType() == Message.MESSAGE_STATUS_TEXT_RIGHT_ONLY) {
                     //Show message status text
                     View statusText = mLayoutInflater.inflate(R.layout.message_status_text, holder.statusContainer);
-                    holder.statusText = (TextView)statusText.findViewById(R.id.status_text_view);
+                    holder.statusText = (TextView) statusText.findViewById(R.id.status_text_view);
                     holder.statusText.setText(message.getStatusText());
                     holder.statusText.setTextColor(mStatusColor);
                 }
@@ -241,13 +258,13 @@ public class MessageAdapter extends ArrayAdapter<Object> {
                 if (message.getMessageStatusType() == Message.MESSAGE_STATUS_ICON || message.getMessageStatusType() == Message.MESSAGE_STATUS_ICON_LEFT_ONLY) {
                     //Show message status icon
                     View statusIcon = mLayoutInflater.inflate(R.layout.message_status_icon, holder.statusContainer);
-                    holder.statusIcon = (ImageView)statusIcon.findViewById(R.id.status_icon_image_view);
+                    holder.statusIcon = (ImageView) statusIcon.findViewById(R.id.status_icon_image_view);
                     holder.statusIcon.setImageDrawable(message.getStatusIcon());
                     setColorDrawable(mStatusColor, holder.statusIcon.getDrawable());
                 } else if (message.getMessageStatusType() == Message.MESSAGE_STATUS_TEXT || message.getMessageStatusType() == Message.MESSAGE_STATUS_TEXT_LEFT_ONLY) {
                     //Show message status text
                     View statusText = mLayoutInflater.inflate(R.layout.message_status_text, holder.statusContainer);
-                    holder.statusText = (TextView)statusText.findViewById(R.id.status_text_view);
+                    holder.statusText = (TextView) statusText.findViewById(R.id.status_text_view);
                     holder.statusText.setText(message.getStatusText());
                     holder.statusText.setTextColor(mStatusColor);
                 }
@@ -325,12 +342,41 @@ public class MessageAdapter extends ArrayAdapter<Object> {
 
         }
 
-        return convertView;
+
+        Animation fadeOut = new AlphaAnimation(1, 0);
+        fadeOut.setInterpolator(new AccelerateInterpolator());
+        fadeOut.setStartOffset(500);
+        fadeOut.setDuration(1000);
+        fadeOut.setRepeatCount(0);
+
+        convertView.setAnimation(fadeOut);
+        int someInt = (new Random()).nextInt();
+        convertView.setId(someInt);
+
+
+        Toast.makeText(getContext(), Integer.toString(someInt), Toast.LENGTH_SHORT).show();
+
+//todo: figure out why the hell it refreshes it all after size changes goddammit
+        final View otherView = convertView;
+        otherView.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                otherView.setVisibility(View.GONE);
+                //mObjects.set(position, null);
+                //remove(position);
+                //notifyDataSetChanged();
+                //parent.removeViewInLayout(otherView);
+                //((ViewGroup) otherView.getParent()).removeView(otherView);
+            }
+        }, 1500);
+        return otherView;
+        //return convertView;
     }
 
     /**
      * Add color to drawable
-     * @param color setting color
+     *
+     * @param color    setting color
      * @param drawable which be set color
      */
     public void setColorDrawable(int color, Drawable drawable) {
@@ -342,8 +388,10 @@ public class MessageAdapter extends ArrayAdapter<Object> {
         DrawableCompat.setTintList(wrappedDrawable, colorStateList);
     }
 
+
     /**
      * Set left bubble background color
+     *
      * @param color left bubble color
      */
     public void setLeftBubbleColor(int color) {
@@ -353,6 +401,7 @@ public class MessageAdapter extends ArrayAdapter<Object> {
 
     /**
      * Set right bubble background color
+     *
      * @param color right bubble color
      */
     public void setRightBubbleColor(int color) {
