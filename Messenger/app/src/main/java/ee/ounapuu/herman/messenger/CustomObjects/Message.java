@@ -14,17 +14,17 @@ public class Message {
     public String textContent;
     public String imgRef;
     public long timestamp;
-    public String posterUID;
+    public String posterName;
 
     public Message() {
     }
 
-    public Message(Boolean isImage, String textContent, String imgRef, long timestamp, String posterUID) {
+    public Message(Boolean isImage, String textContent, String imgRef, long timestamp, String posterName) {
         this.isImage = isImage;
         this.textContent = textContent;
         this.imgRef = imgRef;
         this.timestamp = timestamp;
-        this.posterUID = posterUID;
+        this.posterName = posterName;
     }
 }
 

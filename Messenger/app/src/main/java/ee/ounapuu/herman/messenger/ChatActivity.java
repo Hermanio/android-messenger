@@ -19,16 +19,18 @@ import com.github.bassaer.chatmessageview.models.Message;
 import com.github.bassaer.chatmessageview.models.User;
 import com.github.bassaer.chatmessageview.views.ChatView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 
 public class ChatActivity extends AppCompatActivity {
@@ -51,6 +53,10 @@ public class ChatActivity extends AppCompatActivity {
     private Bitmap myIcon;
     private Bitmap otherIcon;
 
+    public ArrayList<DataSnapshot> messageIDList = new ArrayList<>();
+    public ArrayList<DataSnapshot> messageList = new ArrayList<>();
+    public ArrayList<DataSnapshot> usersList = new ArrayList<>();
+
 
     private String uid;
 
@@ -58,6 +64,7 @@ public class ChatActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
+
 
         mStorageRef = FirebaseStorage.getInstance().getReference();
 
@@ -151,7 +158,7 @@ public class ChatActivity extends AppCompatActivity {
         final User me = new User(myId, myName, myIcon);
         //final User you = new User(yourId, yourName, yourIcon);
 
-        if (mChatView.getInputText() != null) {
+        if (!mChatView.getInputText().equals("")) {
             Message message = new Message.Builder()
                     .setUser(me)
                     .setRightMessage(true)
@@ -159,29 +166,48 @@ public class ChatActivity extends AppCompatActivity {
                     .hideIcon(true)
                     .build();
             //Set to chat view
-            mChatView.send(message);
+
+            //mChatView.send(message);
             sendMessageToDB(mChatView.getInputText());
             //Reset edit text
             mChatView.setInputText("");
 
-            receiveMessage();
+            //buildMessage();
         } else {
             Toast.makeText(this, "Please enter a message!", Toast.LENGTH_SHORT).show();
         }
 
     }
 
-    private void receiveMessage() {
+    private void buildMessage(String username, String timestamp, String messageText) {
         //create using db listener, if own message, ignore
-        getImageForChatMember("vodka");
-        final User otherUser = new User(1, "vodka", otherIcon);
+        getImageForChatMember(username);
+        final User otherUser;
+        Message message;
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date(Long.parseLong(timestamp)));
 
-        Message message = new Message.Builder()
-                .setUser(otherUser)
-                .setRightMessage(false)
-                .setMessageText("test message")
-                .hideIcon(false)
-                .build();
+        if (username.equals(mAuth.getCurrentUser().getEmail())) {
+            otherUser = new User(0, username, myIcon);
+
+            message = new Message.Builder()
+                    .setUser(otherUser)
+                    .setRightMessage(true)
+                    .setMessageText(messageText)
+                    .hideIcon(true)
+                    .build();
+        } else {
+            otherUser = new User(1, username, otherIcon);
+            message = new Message.Builder()
+                    .setUser(otherUser)
+                    .setRightMessage(false)
+                    .setMessageText(messageText)
+                    .hideIcon(false)
+                    .setCreatedAt(calendar)
+                    .build();
+        }
+
+
         mChatView.receive(message);
     }
 
@@ -221,53 +247,52 @@ public class ChatActivity extends AppCompatActivity {
                         message,
                         "",
                         System.currentTimeMillis(),
-                        mAuth.getCurrentUser().getUid());
+                        mAuth.getCurrentUser().getEmail());
         String messageID;
-        DatabaseReference dbRefMessages = database.getReference("messages");
+        DatabaseReference dbRefMessages = database.getReference("/messages/" + chatTopic);
         DatabaseReference newRef = dbRefMessages.push();
-        messageID = newRef.getKey();
         //Toast.makeText(getContext(), messageID, Toast.LENGTH_SHORT).show();
         newRef.setValue(completeMessage);
 
-        DatabaseReference dbRefTopic = database.getReference("/topics/" + chatTopic + "/");
-        dbRefTopic.child("messages").push().setValue(messageID);
+        //DatabaseReference dbRefTopic = database.getReference("/topics/" + chatTopic + "/");
+        //dbRefTopic.child("messages").push().setValue(messageID);
     }
 
     private void fetchMessageIDListFromChat(String chatName) {
-        DatabaseReference topicMessageIdRef = database.getReference("/topics/"+chatName+"/messages/");
 
-        final ArrayList<String> messageIDList = new ArrayList<>();
+        Query getAllPosts = database.getReference("/messages/" + chatName);
 
-        Query getAllPosts = topicMessageIdRef;
-        getAllPosts.addValueEventListener(new ValueEventListener() {
+        getAllPosts.addChildEventListener(new ChildEventListener() {
+
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                DatabaseReference allMessagesRef;
-                for (DataSnapshot messageId: dataSnapshot.getChildren()) {
-                    allMessagesRef =  database.getReference("/messages/"+messageId.getValue());
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
 
-                    //Log.d("messages", allMessagesRef.child("textContent"));
-                    Log.d("messages", messageId.getValue().toString());
+                addMessageIDtoList(dataSnapshot);
+                String username = dataSnapshot.child("posterName").getValue().toString();
+                String timestamp = dataSnapshot.child("timestamp").getValue().toString();
+                String textContent = dataSnapshot.child("textContent").getValue().toString();
+                Log.d("messages", dataSnapshot.child("textContent").getValue().toString());
+                Log.d("messages", dataSnapshot.child("posterName").getValue().toString());
+                Log.d("messages", dataSnapshot.child("timestamp").getValue().toString());
 
-                    allMessagesRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            Log.d("messages", dataSnapshot.child("textContent").getValue().toString());
-                            Log.d("messages", dataSnapshot.child("timestamp").getValue().toString());
-                            Log.d("messages", dataSnapshot.child("posterUID").getValue().toString());
+                //todo: messagebuilder here
+                buildMessage(username, timestamp, textContent);
 
-                            //todo: get person data here in same manner
-                        }
+            }
 
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
 
-                        }
-                    });
+            }
 
-                    //messageIDList.add(messageId.getKey());
-                }
-                //getMessages(messageIDList);
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
             }
 
             @Override
@@ -277,9 +302,15 @@ public class ChatActivity extends AppCompatActivity {
         });
     }
 
-    private void getMessages(ArrayList<String> messageIDs) {
-        for (String messageID : messageIDs) {
-           // Log.d("messages", allMessagesRef.getValue(messageID));
-        }
+    public void addMessageIDtoList(DataSnapshot messageIDSnapshot) {
+        this.messageIDList.add(messageIDSnapshot);
+    }
+
+    public void addMessageToList(DataSnapshot messageSnapshot) {
+        this.messageList.add(messageSnapshot);
+    }
+
+    public void addUserToList(DataSnapshot userSnapshot) {
+        this.usersList.add(userSnapshot);
     }
 }

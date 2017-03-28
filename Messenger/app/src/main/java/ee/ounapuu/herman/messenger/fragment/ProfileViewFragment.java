@@ -202,7 +202,7 @@ public class ProfileViewFragment extends Fragment implements View.OnClickListene
     private void uploadImageToStorage(Bitmap image) {
         //todo replace with topic name
         //Toast.makeText(getContext(), userId, Toast.LENGTH_SHORT).show();
-        StorageReference uploadImageReference = mStorageRef.child(userId + ".jpg");
+        StorageReference uploadImageReference = mStorageRef.child(userEmail + ".jpg");
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         image.compress(Bitmap.CompressFormat.JPEG, 100, baos);
@@ -230,7 +230,7 @@ public class ProfileViewFragment extends Fragment implements View.OnClickListene
     }
 
     private void retrieveProfilePicture() {
-        StorageReference uploadImageReference = mStorageRef.child(userId + ".jpg");
+        StorageReference uploadImageReference = mStorageRef.child(userEmail + ".jpg");
         Glide.with(getContext()).using(new FirebaseImageLoader()).
                 load(uploadImageReference).
                 signature(new StringSignature(String.valueOf(System.currentTimeMillis())))
