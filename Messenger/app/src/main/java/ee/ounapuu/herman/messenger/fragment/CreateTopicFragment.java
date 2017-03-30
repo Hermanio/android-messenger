@@ -2,6 +2,7 @@ package ee.ounapuu.herman.messenger.fragment;
 
 import android.Manifest;
 import android.app.Fragment;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -14,6 +15,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -195,17 +197,43 @@ public class CreateTopicFragment extends Fragment implements View.OnClickListene
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.chooseImageFromCameraButton:
-                chooseImageFromCamera(view);
-                break;
             case R.id.chooseImageFromGalleryButton:
-                chooseImageFromGallery(view);
+                chooseImage(view);
                 break;
             case R.id.button_add_new_topic:
                 createNewTopic(uploadReadyImage, newTopicName.getText().toString());
                 break;
         }
     }
+    public void chooseImage(View view) {
+        final String[] items = {"Take Photo", "Choose from Library", "Cancel"};
 
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Add Photo!");
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (items[which]) {
+                    case "Take Photo":
+                        Intent takePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        startActivityForResult(takePhotoIntent, REQUEST_CAMERA);
+                        break;
+                    case "Choose from Library":
+                        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                                    REQUEST_STORAGE_PERMISSION);
+                            dialog.dismiss();
+                        } else {
+                            openPhotoSelect();
+                        }
+                        break;
+                    default:
+                        dialog.dismiss();
+                }
+            }
+        });
+        builder.show();
+    }
     private void createNewTopic(Bitmap image, final String topicName) {
         if (image == null && topicName.equals("")) {
             Toast.makeText(getContext(), "Please choose a topic name and image!", Toast.LENGTH_SHORT).show();
