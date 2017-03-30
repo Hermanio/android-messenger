@@ -216,82 +216,58 @@ public class ChatActivity extends AppCompatActivity {
 
         StorageReference imageReference;
 
+   /*
+            always:
+            setuser
+            setcreated
+            build
 
-//todo: fix this mess
+            if image
+            setType picture
+            setpicture onload then receive
+
+            if text
+            setMessageText
+
+            if self
+            setrightmessage true
+            hideicon true
+
+            if other
+            setrightmessage false
+            hideicon false
+            * */
+
+        final Message.Builder messageBuilder = new Message.Builder()
+                .setCreatedAt(calendar);
+
         if (username.equals(mAuth.getCurrentUser().getEmail())) {
             otherUser = new User(0, username, myIcon);
-
-            if (isImage) {
-                imageReference = mStorageRef.child(content);
-                message = new Message.Builder()
-                        .setRightMessage(true)
-                        .setMessageText("this text will not be shown")
-                        .setUser(otherUser)
-                        .setCreatedAt(calendar)
-
-                        .setType(Message.Type.PICTURE) //Set Message Type
-                        .build();
-
-                Glide.with(this).using(new FirebaseImageLoader()).
-                        load(imageReference).asBitmap().into(new SimpleTarget<Bitmap>(500, 500) {
-                    @Override
-                    public void onResourceReady(Bitmap resource, GlideAnimation glideAnimation) {
-                        message.setPicture(resource);
-                        mChatView.receive(message);
-
-                    }
-                });
-            } else {
-                message = new Message.Builder()
-                        .setUser(otherUser)
-                        .setRightMessage(true)
-                        .setCreatedAt(calendar)
-
-                        .setMessageText(content)
-                        .hideIcon(true)
-                        .build();
-
-                mChatView.receive(message);
-
-            }
-
+            messageBuilder.setRightMessage(true);
+            messageBuilder.hideIcon(true);
         } else {
             otherUser = new User(1, username, otherIcon);
+            messageBuilder.setRightMessage(false);
+            messageBuilder.hideIcon(false);
+        }
 
-            if (isImage) {
-                message = new Message.Builder()
-                        .setRightMessage(false)
-                        .hideIcon(false)
-                        .setMessageText("this text will not be shown")
-                        .setUser(otherUser)
-                        .setCreatedAt(calendar)
+        messageBuilder.setUser(otherUser);
 
-                        .setType(Message.Type.PICTURE) //Set Message Type
-                        .build();
-                imageReference = mStorageRef.child(content);
-                Glide.with(this).using(new FirebaseImageLoader()).
-                        load(imageReference).asBitmap().into(new SimpleTarget<Bitmap>() {
-                    @Override
-                    public void onResourceReady(Bitmap resource, GlideAnimation glideAnimation) {
-                        message.setPicture(resource);
-                        mChatView.receive(message);
+        if (isImage) {
+            messageBuilder.setType(Message.Type.PICTURE);
+            imageReference = mStorageRef.child(content);
+            Glide.with(this).using(new FirebaseImageLoader()).
+                    load(imageReference).asBitmap().into(new SimpleTarget<Bitmap>(500, 500) {
+                @Override
+                public void onResourceReady(Bitmap resource, GlideAnimation glideAnimation) {
+                    messageBuilder.setPicture(resource);
+                    mChatView.receive(messageBuilder.build());
 
-                    }
-                });
-
-            } else {
-                message = new Message.Builder()
-                        .setUser(otherUser)
-                        .setRightMessage(false)
-                        .setMessageText(content)
-                        .hideIcon(false)
-                        .setCreatedAt(calendar)
-                        .build();
-
-                mChatView.receive(message);
-
-            }
-
+                }
+            });
+        } else {
+            messageBuilder.setMessageText(content);
+            mChatView.receive(messageBuilder.build());
         }
 
 

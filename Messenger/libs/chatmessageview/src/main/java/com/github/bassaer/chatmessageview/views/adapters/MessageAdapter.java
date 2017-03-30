@@ -340,38 +340,45 @@ public class MessageAdapter extends ArrayAdapter<Object> {
                     });
                 }
             }
+            Animation fadeOut = new AlphaAnimation(1, 0);
+            fadeOut.setInterpolator(new AccelerateInterpolator());
+            fadeOut.setStartOffset(500);
+            fadeOut.setDuration(1000);
+            fadeOut.setRepeatCount(0);
 
+            convertView.setAnimation(fadeOut);
+            int someInt = (new Random()).nextInt();
+            convertView.setId(someInt);
+
+
+            //mObjects.remove(0);
+
+            //Toast.makeText(getContext(), Integer.toString(someInt), Toast.LENGTH_SHORT).show();
+
+//todo: figure out why the hell it refreshes it all after size changes goddammit
+            final View otherView = convertView;
+            otherView.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    //otherView.setVisibility(View.GONE);
+                    //mObjects.set(position, null);
+                    //remove(position);
+                    //notifyDataSetChanged();
+                    //parent.removeViewInLayout(otherView);
+                    //((ViewGroup) otherView.getParent()).removeView(otherView);
+                    if (mObjects.size() > position) {
+                        mObjects.remove(position);
+                        notifyDataSetChanged();
+
+                    }
+                }
+            }, 1500);
+            return otherView;
         }
 
 
-        Animation fadeOut = new AlphaAnimation(1, 0);
-        fadeOut.setInterpolator(new AccelerateInterpolator());
-        fadeOut.setStartOffset(500);
-        fadeOut.setDuration(10000);
-        fadeOut.setRepeatCount(0);
 
-        convertView.setAnimation(fadeOut);
-        int someInt = (new Random()).nextInt();
-        convertView.setId(someInt);
-
-
-        //Toast.makeText(getContext(), Integer.toString(someInt), Toast.LENGTH_SHORT).show();
-
-//todo: figure out why the hell it refreshes it all after size changes goddammit
-        final View otherView = convertView;
-        otherView.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                otherView.setVisibility(View.GONE);
-                //mObjects.set(position, null);
-                //remove(position);
-                //notifyDataSetChanged();
-                //parent.removeViewInLayout(otherView);
-                //((ViewGroup) otherView.getParent()).removeView(otherView);
-            }
-        }, 10500);
-        return otherView;
-        //return convertView;
+        return convertView;
     }
 
     /**
