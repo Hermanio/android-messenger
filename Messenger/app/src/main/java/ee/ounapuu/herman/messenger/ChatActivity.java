@@ -194,7 +194,7 @@ public class ChatActivity extends AppCompatActivity {
             //Set to chat view
 
             //mChatView.send(message);
-            sendMessageToDB(mChatView.getInputText());
+            sendMessageToDB(false, mChatView.getInputText());
             //Reset edit text
             mChatView.setInputText("");
 
@@ -215,28 +215,6 @@ public class ChatActivity extends AppCompatActivity {
 
 
         StorageReference imageReference;
-
-   /*
-            always:
-            setuser
-            setcreated
-            build
-
-            if image
-            setType picture
-            setpicture onload then receive
-
-            if text
-            setMessageText
-
-            if self
-            setrightmessage true
-            hideicon true
-
-            if other
-            setrightmessage false
-            hideicon false
-            * */
 
         final Message.Builder messageBuilder = new Message.Builder()
                 .setCreatedAt(calendar);
@@ -273,11 +251,6 @@ public class ChatActivity extends AppCompatActivity {
 
     }
 
-    private void sendImageMessage() {
-        openPhotoSelect();
-    }
-
-
     private void getImageForUser(String username) {
         String imagePath = username + ".jpg";
         StorageReference storageReference = mStorageRef.child((imagePath));
@@ -306,15 +279,25 @@ public class ChatActivity extends AppCompatActivity {
         });
     }
 
-    private void sendMessageToDB(String message) {
+    private void sendMessageToDB(boolean isImage, String content) {
         //send message to messages, get id, then send message id to chat messages
-        ee.ounapuu.herman.messenger.CustomObjects.Message completeMessage =
-                new ee.ounapuu.herman.messenger.CustomObjects.Message(
-                        false,
-                        message,
-                        "",
-                        System.currentTimeMillis(),
-                        mAuth.getCurrentUser().getEmail());
+        ee.ounapuu.herman.messenger.CustomObjects.Message completeMessage;
+        if (isImage) {
+            completeMessage = new ee.ounapuu.herman.messenger.CustomObjects.Message(
+                    isImage,
+                    "",
+                    content,
+                    System.currentTimeMillis(),
+                    mAuth.getCurrentUser().getEmail());
+        } else {
+            completeMessage = new ee.ounapuu.herman.messenger.CustomObjects.Message(
+                    isImage,
+                    content,
+                    "",
+                    System.currentTimeMillis(),
+                    mAuth.getCurrentUser().getEmail());
+        }
+
         String messageID;
         DatabaseReference dbRefMessages = database.getReference("/messages/" + chatTopic);
         DatabaseReference newRef = dbRefMessages.push();
@@ -486,7 +469,7 @@ public class ChatActivity extends AppCompatActivity {
 
                 //Uri downloadUrl = taskSnapshot.getDownloadUrl();
                 //Toast.makeText(getContext(), downloadUrl.toString(), Toast.LENGTH_SHORT).show();
-                sendImageMessageToDB(imageName);
+                sendMessageToDB(true, imageName);
 
             }
         });

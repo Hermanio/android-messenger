@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
@@ -58,6 +59,22 @@ public class ViewTopicFragment extends Fragment implements View.OnClickListener 
         featured_button.setOnClickListener(this);
         Button usergen_button = (Button) view.findViewById(R.id.button_usergen_choice);
         usergen_button.setOnClickListener(this);
+        SearchView searchView = (SearchView) view.findViewById(R.id.searchview_topic);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Toast.makeText(getContext(), query, Toast.LENGTH_SHORT).show();
+                //todo: filtering should be here, simple regex match probably?
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                //Toast.makeText(getContext(), "edit", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        });
 
         getAllTopicsQuery = mDatabase.child("topics").orderByKey();
         setDataUpdateListener(view);

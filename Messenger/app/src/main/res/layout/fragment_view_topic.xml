@@ -12,7 +12,7 @@
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/searchView"
+        android:layout_below="@+id/searchview_topic"
         android:orientation="horizontal">
 
         <Button
@@ -38,7 +38,7 @@
     </LinearLayout>
 
     <SearchView
-        android:id="@+id/searchView"
+        android:id="@+id/searchview_topic"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         app:queryHint="Search...">
