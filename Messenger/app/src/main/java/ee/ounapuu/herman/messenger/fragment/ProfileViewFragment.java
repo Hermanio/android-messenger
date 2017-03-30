@@ -123,12 +123,24 @@ public class ProfileViewFragment extends Fragment implements View.OnClickListene
 
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_STORAGE_PERMISSION);
-            openPhotoSelect();
+            //openPhotoSelect();
         } else {
             openPhotoSelect();
         }
 
 
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.chooseImageFromCameraButton:
+                chooseImageFromCamera(view);
+                break;
+            case R.id.chooseImageFromGalleryButton:
+                chooseImageFromGallery(view);
+                break;
+        }
     }
     /* Pastebin code example stuff below */
 
@@ -187,17 +199,7 @@ public class ProfileViewFragment extends Fragment implements View.OnClickListene
         return selectedImagePath;
     }
 
-    @Override
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.chooseImageFromCameraButton:
-                chooseImageFromCamera(view);
-                break;
-            case R.id.chooseImageFromGalleryButton:
-                chooseImageFromGallery(view);
-                break;
-        }
-    }
+
 
     private void uploadImageToStorage(Bitmap image) {
         //todo replace with topic name

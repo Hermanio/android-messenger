@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -27,7 +28,7 @@ import ee.ounapuu.herman.messenger.customListAdapter.CustomListAdapter;
  * Created by toks on 3/19/17.
  */
 
-public class ViewTopicFragment extends Fragment {
+public class ViewTopicFragment extends Fragment implements View.OnClickListener {
 
     ListView list;
     String[] itemname;
@@ -53,8 +54,14 @@ public class ViewTopicFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_view_topic, container, false);
+        Button featured_button = (Button) view.findViewById(R.id.button_featured_choice);
+        featured_button.setOnClickListener(this);
+        Button usergen_button = (Button) view.findViewById(R.id.button_usergen_choice);
+        usergen_button.setOnClickListener(this);
+
         getAllTopicsQuery = mDatabase.child("topics").orderByKey();
         setDataUpdateListener(view);
+        setTopicsMode("featured");
         getAllTopicsQuery.addValueEventListener(dataUpdateListener);
 
         return view;
@@ -119,4 +126,33 @@ public class ViewTopicFragment extends Fragment {
             }
         };
     }
+
+
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.button_featured_choice:
+                setTopicsMode("featured");
+                break;
+            case R.id.button_usergen_choice:
+                setTopicsMode("usergen");
+
+                break;
+        }
+    }
+
+    private void setTopicsMode(String topicsMode) {
+        getAllTopicsQuery.removeEventListener(dataUpdateListener);
+        if (topicsMode.equals("featured")) {
+            Toast.makeText(getContext(), "featured", Toast.LENGTH_SHORT).show();
+            getAllTopicsQuery = mDatabase.child("topics").orderByValue().limitToFirst(1);
+            getAllTopicsQuery.addValueEventListener(dataUpdateListener);
+        } else {
+            Toast.makeText(getContext(), "usergen", Toast.LENGTH_SHORT).show();
+            getAllTopicsQuery = mDatabase.child("topics").limitToFirst(10);
+            getAllTopicsQuery.addValueEventListener(dataUpdateListener);
+        }
+    }
+
 }

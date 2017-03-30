@@ -1,6 +1,5 @@
 package ee.ounapuu.herman.messenger;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -8,20 +7,14 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-import java.util.TimerTask;
-
-import ee.ounapuu.herman.messenger.fragment.ChatFragment;
 import ee.ounapuu.herman.messenger.fragment.CreateTopicFragment;
 import ee.ounapuu.herman.messenger.fragment.ProfileViewFragment;
 import ee.ounapuu.herman.messenger.fragment.ViewTopicFragment;
@@ -81,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
             switch (getLastOpenedFragment()) {
                 case R.id.navigation_create_topic:
                     fragment = new CreateTopicFragment();
-                    bottomNavigationView.getMenu().getItem(2).setChecked(true);
+                    bottomNavigationView.getMenu().getItem(1).setChecked(true);
                     break;
                 case R.id.navigation_view_topic:
                     fragment = new ViewTopicFragment();
@@ -89,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case R.id.navigation_profile:
                     fragment = new ProfileViewFragment();
-                    bottomNavigationView.getMenu().getItem(3).setChecked(true);
+                    bottomNavigationView.getMenu().getItem(2).setChecked(true);
                     break;
                 default:
                     fragment = new ViewTopicFragment();
@@ -111,16 +104,7 @@ public class MainActivity extends AppCompatActivity {
         editor.apply();
     }
 
-    public void changeToChatView(String topicName) {
-        Fragment fragment = getFragmentManager().findFragmentById(R.id.chat_view);
-        if (fragment == null) {
-            fragment = new ChatFragment();
-        }
 
-
-        getFragmentManager().beginTransaction().replace(R.id.frame_layout, fragment).commit();
-        bottomNavigationView.getMenu().getItem(1).setChecked(true);
-    }
 
     @Override
     public void onStart() {

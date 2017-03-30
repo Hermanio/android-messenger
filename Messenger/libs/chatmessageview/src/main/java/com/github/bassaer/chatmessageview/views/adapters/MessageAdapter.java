@@ -43,6 +43,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 public class MessageAdapter extends ArrayAdapter<Object> {
 
+    //todo: look into setting new adapter every time data changes OR remove some keyboard/scroll related events?
     private LayoutInflater mLayoutInflater;
     private final Context context;
 
@@ -346,7 +347,7 @@ public class MessageAdapter extends ArrayAdapter<Object> {
         Animation fadeOut = new AlphaAnimation(1, 0);
         fadeOut.setInterpolator(new AccelerateInterpolator());
         fadeOut.setStartOffset(500);
-        fadeOut.setDuration(1000);
+        fadeOut.setDuration(10000);
         fadeOut.setRepeatCount(0);
 
         convertView.setAnimation(fadeOut);
@@ -354,7 +355,7 @@ public class MessageAdapter extends ArrayAdapter<Object> {
         convertView.setId(someInt);
 
 
-        Toast.makeText(getContext(), Integer.toString(someInt), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getContext(), Integer.toString(someInt), Toast.LENGTH_SHORT).show();
 
 //todo: figure out why the hell it refreshes it all after size changes goddammit
         final View otherView = convertView;
@@ -368,7 +369,7 @@ public class MessageAdapter extends ArrayAdapter<Object> {
                 //parent.removeViewInLayout(otherView);
                 //((ViewGroup) otherView.getParent()).removeView(otherView);
             }
-        }, 1500);
+        }, 10500);
         return otherView;
         //return convertView;
     }
