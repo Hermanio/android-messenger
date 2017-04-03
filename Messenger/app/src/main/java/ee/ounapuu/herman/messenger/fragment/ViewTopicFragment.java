@@ -34,6 +34,7 @@ import ee.ounapuu.herman.messenger.customListAdapter.CustomListAdapter;
 public class ViewTopicFragment extends Fragment implements View.OnClickListener {
 
     ListView list;
+    CustomListAdapter adapter;
     ArrayList<String> itemname;
 
     private DatabaseReference mDatabase;
@@ -68,8 +69,9 @@ public class ViewTopicFragment extends Fragment implements View.OnClickListener 
 
             @Override
             public boolean onQueryTextSubmit(String query) {
-                Toast.makeText(getContext(), query, Toast.LENGTH_SHORT).show();
+               // Toast.makeText(getContext(), query, Toast.LENGTH_SHORT).show();
                 //todo: filtering should be here, simple regex match probably?
+                filterTopicsByString(query);
                 return false;
             }
 
@@ -100,7 +102,7 @@ public class ViewTopicFragment extends Fragment implements View.OnClickListener 
         super.onDestroy();
     }
 
-    private void setDataUpdateListener(final View view) {
+    private void setDataUpdateListener(final View view){
         dataUpdateListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -109,13 +111,13 @@ public class ViewTopicFragment extends Fragment implements View.OnClickListener 
                 if (displayMode.equals("FEATURED")) {
                     for (DataSnapshot topicSnapShot : dataSnapshot.getChildren()) {
                         if (Boolean.parseBoolean(topicSnapShot.child("isStaticTopic").getValue().toString())) {
-                            itemname.add(topicSnapShot.getKey());
+                                itemname.add(topicSnapShot.getKey());
                         }
                     }
                 } else {
                     for (DataSnapshot topicSnapShot : dataSnapshot.getChildren()) {
                         if (!Boolean.parseBoolean(topicSnapShot.child("isStaticTopic").getValue().toString())) {
-                            itemname.add(topicSnapShot.getKey());
+                                itemname.add(topicSnapShot.getKey());
                         }
                     }
                 }
@@ -126,7 +128,7 @@ public class ViewTopicFragment extends Fragment implements View.OnClickListener 
                 }
 
                 if (itemname.size() > 0) {
-                    CustomListAdapter adapter = new CustomListAdapter(getActivity(), itemname);
+                    adapter = new CustomListAdapter(getActivity(), itemname);
 
                     list = (ListView) view.findViewById(R.id.customlist);
                     list.setAdapter(adapter);
@@ -187,6 +189,37 @@ public class ViewTopicFragment extends Fragment implements View.OnClickListener 
             getAllTopicsQuery = mDatabase.child("topics").orderByValue();
             getAllTopicsQuery.addValueEventListener(dataUpdateListener);
         }
+    }
+
+    private void filterTopicsByString(String searchQuery) {
+        final ArrayList<String> matchingTopicNames = new ArrayList<>();
+        for (String item : itemname) {
+            if (item.contains(searchQuery)) {
+                matchingTopicNames.add(item);
+            }
+        }
+
+        if (matchingTopicNames.size() > 0 ) {
+            adapter = new CustomListAdapter(getActivity(), matchingTopicNames);
+
+            list.setAdapter(adapter);
+
+            list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view,
+                                        int position, long id) {
+                    String selectedItem = matchingTopicNames.get(position);
+
+                    Intent i = new Intent(getActivity(), ChatActivity.class);
+                    i.putExtra("topicName", selectedItem);
+                    startActivity(i);
+                }
+            });
+
+            adapter.notifyDataSetChanged();
+        }
+
     }
 
 }
