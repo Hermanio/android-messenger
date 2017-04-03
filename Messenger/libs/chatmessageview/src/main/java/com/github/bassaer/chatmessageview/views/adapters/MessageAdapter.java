@@ -369,7 +369,6 @@ public class MessageAdapter extends ArrayAdapter<Object> {
                     if (mObjects.size() > position) {
                         mObjects.remove(position);
                         notifyDataSetChanged();
-
                     }
                 }
             }, 1500);

@@ -264,6 +264,8 @@ public class CreateTopicFragment extends Fragment implements View.OnClickListene
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
+                Toast.makeText(getContext(), "Upload done!", Toast.LENGTH_SHORT).show();
+
                 List<String> participants = new ArrayList<String>();
                 List<String> messages = new ArrayList<String>();
                 participants.add(FirebaseAuth.getInstance().getCurrentUser().getUid());
@@ -274,6 +276,7 @@ public class CreateTopicFragment extends Fragment implements View.OnClickListene
                 changeTopicPicture(topicName);
                 //Toast.makeText(getContext(), "Tried sending messge", Toast.LENGTH_SHORT).show();
 
+
                 //((MainActivity) getActivity()).changeToChatView(topicName);
                 //todo: open ChatActivity with proper data
                 Intent i = new Intent(getActivity(), ChatActivity.class);
@@ -281,7 +284,6 @@ public class CreateTopicFragment extends Fragment implements View.OnClickListene
                 startActivity(i);
             }
         });
-
     }
 
     private void changeTopicPicture(String topicName) {

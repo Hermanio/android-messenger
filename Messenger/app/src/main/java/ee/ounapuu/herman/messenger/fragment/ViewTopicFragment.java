@@ -20,6 +20,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+
 import ee.ounapuu.herman.messenger.ChatActivity;
 import ee.ounapuu.herman.messenger.MainActivity;
 import ee.ounapuu.herman.messenger.R;
@@ -32,11 +34,13 @@ import ee.ounapuu.herman.messenger.customListAdapter.CustomListAdapter;
 public class ViewTopicFragment extends Fragment implements View.OnClickListener {
 
     ListView list;
-    String[] itemname;
+    ArrayList<String> itemname;
 
     private DatabaseReference mDatabase;
     private Query getAllTopicsQuery;
     private ValueEventListener dataUpdateListener;
+
+    private String displayMode = "FEATURED";
 
     public static ViewTopicFragment newInstance() {
         ViewTopicFragment fragment = new ViewTopicFragment();
@@ -100,40 +104,52 @@ public class ViewTopicFragment extends Fragment implements View.OnClickListener 
         dataUpdateListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                itemname = new ArrayList<>();
                 Log.d("length", "Length is " + dataSnapshot.getChildrenCount());
-                int iterator = 0;
-                itemname = new String[(int) dataSnapshot.getChildrenCount()];
-                for (DataSnapshot topicSnapShot : dataSnapshot.getChildren()) {
-                    Log.d("loop", topicSnapShot.getKey());
-                    itemname[iterator] = topicSnapShot.getKey();
-                    iterator++;
+                if (displayMode.equals("FEATURED")) {
+                    for (DataSnapshot topicSnapShot : dataSnapshot.getChildren()) {
+                        if (Boolean.parseBoolean(topicSnapShot.child("isStaticTopic").getValue().toString())) {
+                            itemname.add(topicSnapShot.getKey());
+                        }
+                    }
+                } else {
+                    for (DataSnapshot topicSnapShot : dataSnapshot.getChildren()) {
+                        if (!Boolean.parseBoolean(topicSnapShot.child("isStaticTopic").getValue().toString())) {
+                            itemname.add(topicSnapShot.getKey());
+                        }
+                    }
                 }
+
 
                 if (itemname != null) {
-                    Log.d("length", "Length is for array " + itemname.length);
+                    Log.d("length", "Length is for array " + itemname.size());
+                }
 
+                if (itemname.size() > 0) {
+                    CustomListAdapter adapter = new CustomListAdapter(getActivity(), itemname);
+
+                    list = (ListView) view.findViewById(R.id.customlist);
+                    list.setAdapter(adapter);
+
+                    list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view,
+                                                int position, long id) {
+                            String selectedItem = itemname.get(position);
+                            // Toast.makeText(getContext(), selectedItem, Toast.LENGTH_SHORT).show();
+
+                            Intent i = new Intent(getActivity(), ChatActivity.class);
+                            i.putExtra("topicName", selectedItem);
+                            startActivity(i);
+
+                        }
+                    });
+                } else {
+                    Log.d("adapter", "no items sent to adapter");
                 }
 
 
-                CustomListAdapter adapter = new CustomListAdapter(getActivity(), itemname);
-
-                list = (ListView) view.findViewById(R.id.customlist);
-                list.setAdapter(adapter);
-
-                list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view,
-                                            int position, long id) {
-                        String selectedItem = itemname[+position];
-                       // Toast.makeText(getContext(), selectedItem, Toast.LENGTH_SHORT).show();
-
-                        Intent i = new Intent(getActivity(), ChatActivity.class);
-                        i.putExtra("topicName", selectedItem);
-                        startActivity(i);
-
-                    }
-                });
             }
 
             @Override
@@ -143,8 +159,6 @@ public class ViewTopicFragment extends Fragment implements View.OnClickListener 
             }
         };
     }
-
-
 
     @Override
     public void onClick(View view) {
@@ -162,12 +176,15 @@ public class ViewTopicFragment extends Fragment implements View.OnClickListener 
     private void setTopicsMode(String topicsMode) {
         getAllTopicsQuery.removeEventListener(dataUpdateListener);
         if (topicsMode.equals("featured")) {
+            this.displayMode = "FEATURED";
             Toast.makeText(getContext(), "featured", Toast.LENGTH_SHORT).show();
-            getAllTopicsQuery = mDatabase.child("topics").orderByValue().limitToFirst(1);
+            getAllTopicsQuery = mDatabase.child("topics").orderByValue();
             getAllTopicsQuery.addValueEventListener(dataUpdateListener);
         } else {
+            this.displayMode = "USERGEN";
+
             Toast.makeText(getContext(), "usergen", Toast.LENGTH_SHORT).show();
-            getAllTopicsQuery = mDatabase.child("topics").limitToFirst(10);
+            getAllTopicsQuery = mDatabase.child("topics").orderByValue();
             getAllTopicsQuery.addValueEventListener(dataUpdateListener);
         }
     }

@@ -14,18 +14,20 @@ import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.util.ArrayList;
+
 import ee.ounapuu.herman.messenger.R;
 
 public class CustomListAdapter extends ArrayAdapter<String> {
 
     private final Activity context;
-    private final String[] itemname;
+    private final ArrayList<String> itemname;
 
 
     private StorageReference mStorageRef;
 
 
-    public CustomListAdapter(Activity context, String[] itemname) {
+    public CustomListAdapter(Activity context, ArrayList<String> itemname) {
         super(context, R.layout.custom_list, itemname);
 
         this.context = context;
@@ -42,12 +44,12 @@ public class CustomListAdapter extends ArrayAdapter<String> {
         ImageView imageView = (ImageView) rowView.findViewById(R.id.icon);
         TextView extratxt = (TextView) rowView.findViewById(R.id.textView1);
 
-        txtTitle.setText(itemname[position]);
+        txtTitle.setText(itemname.get(position));
 
         //todo: replace with
-        extratxt.setText("Placeholder description for topic " + itemname[position]);
+        extratxt.setText("Placeholder description for topic " + itemname.get(position));
 
-        setIconToItem(itemname[position], imageView);
+        setIconToItem(itemname.get(position), imageView);
         return rowView;
 
     }

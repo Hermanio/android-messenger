@@ -235,20 +235,17 @@ public class ChatActivity extends AppCompatActivity {
             messageBuilder.setType(Message.Type.PICTURE);
             imageReference = mStorageRef.child(content);
             Glide.with(this).using(new FirebaseImageLoader()).
-                    load(imageReference).asBitmap().into(new SimpleTarget<Bitmap>(500, 500) {
+                    load(imageReference).asBitmap().into(new SimpleTarget<Bitmap>() {
                 @Override
                 public void onResourceReady(Bitmap resource, GlideAnimation glideAnimation) {
                     messageBuilder.setPicture(resource);
                     mChatView.receive(messageBuilder.build());
-
                 }
             });
         } else {
             messageBuilder.setMessageText(content);
             mChatView.receive(messageBuilder.build());
         }
-
-
     }
 
     private void getImageForUser(String username) {
@@ -267,8 +264,8 @@ public class ChatActivity extends AppCompatActivity {
     private void getImageForChatMember(String username) {
         //String imagePath = username + ".jpg";
         //todo: replace with something else when user info GET operations are ready, this is for testing only
-        String imagePath = "tfIBzXWgD4XnyG3y2IjD08SgHeq1.jpg";
-        StorageReference storageReference = mStorageRef.child((imagePath));
+        //String imagePath = "tfIBzXWgD4XnyG3y2IjD08SgHeq1.jpg";
+        StorageReference storageReference = mStorageRef.child(username + ".jpg");
 
         Glide.with(this).using(new FirebaseImageLoader()).
                 load(storageReference).asBitmap().into(new SimpleTarget<Bitmap>(100, 100) {
