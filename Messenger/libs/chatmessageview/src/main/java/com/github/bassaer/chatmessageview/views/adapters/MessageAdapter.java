@@ -30,6 +30,7 @@ import com.github.bassaer.chatmessageview.models.User;
 import com.github.bassaer.chatmessageview.views.RoundImageView;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -342,36 +343,23 @@ public class MessageAdapter extends ArrayAdapter<Object> {
             }
             Animation fadeOut = new AlphaAnimation(1, 0);
             fadeOut.setInterpolator(new AccelerateInterpolator());
-            fadeOut.setStartOffset(500);
-            fadeOut.setDuration(1000);
+            //fadeOut.setStartOffset(5000);
+            fadeOut.setDuration(message.getmKeepAlive());
             fadeOut.setRepeatCount(0);
-
             convertView.setAnimation(fadeOut);
-            int someInt = (new Random()).nextInt();
-            convertView.setId(someInt);
 
+            //Toast.makeText(context, "time diff "+ Long.toString(message.getCreatedAt().getTimeInMillis() - Calendar.getInstance().getTimeInMillis()), Toast.LENGTH_SHORT).show();
 
-            //mObjects.remove(0);
-
-            //Toast.makeText(getContext(), Integer.toString(someInt), Toast.LENGTH_SHORT).show();
-
-//todo: figure out why the hell it refreshes it all after size changes goddammit
             final View otherView = convertView;
             otherView.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    //otherView.setVisibility(View.GONE);
-                    //mObjects.set(position, null);
-                    //remove(position);
-                    //notifyDataSetChanged();
-                    //parent.removeViewInLayout(otherView);
-                    //((ViewGroup) otherView.getParent()).removeView(otherView);
                     if (mObjects.size() > position) {
                         mObjects.remove(position);
                         notifyDataSetChanged();
                     }
                 }
-            }, 1500);
+            }, message.getmKeepAlive());
             return otherView;
         }
 

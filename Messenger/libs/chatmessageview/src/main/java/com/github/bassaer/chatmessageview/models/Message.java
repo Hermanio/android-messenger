@@ -74,6 +74,12 @@ public class Message {
     private int mStatus;
 
     /**
+     * Message keepalive
+     * Get the message keepalive time (for rendering animations)
+     */
+    private int mKeepAlive;
+
+    /**
      * Message status is not shown.
      */
     public static final int MESSAGE_STATUS_NONE = 0;
@@ -128,6 +134,14 @@ public class Message {
      * PICTURE message
      */
     private Bitmap mPicture;
+
+    public int getmKeepAlive() {
+        return mKeepAlive;
+    }
+
+    public void setmKeepAlive(int mKeepAlive) {
+        this.mKeepAlive = mKeepAlive;
+    }
 
 
     /**

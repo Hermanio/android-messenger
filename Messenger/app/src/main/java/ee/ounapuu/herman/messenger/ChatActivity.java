@@ -234,7 +234,7 @@ public class ChatActivity extends AppCompatActivity {
         if (isImage) {
             messageBuilder.setType(Message.Type.PICTURE);
             imageReference = mStorageRef.child(content);
-            Glide.with(this).using(new FirebaseImageLoader()).
+            Glide.with(getApplicationContext()).using(new FirebaseImageLoader()).
                     load(imageReference).asBitmap().into(new SimpleTarget<Bitmap>() {
                 @Override
                 public void onResourceReady(Bitmap resource, GlideAnimation glideAnimation) {
@@ -252,7 +252,7 @@ public class ChatActivity extends AppCompatActivity {
         String imagePath = username + ".jpg";
         StorageReference storageReference = mStorageRef.child((imagePath));
 
-        Glide.with(this).using(new FirebaseImageLoader()).
+        Glide.with(getApplicationContext()).using(new FirebaseImageLoader()).
                 load(storageReference).asBitmap().into(new SimpleTarget<Bitmap>(100, 100) {
             @Override
             public void onResourceReady(Bitmap resource, GlideAnimation glideAnimation) {
@@ -267,7 +267,7 @@ public class ChatActivity extends AppCompatActivity {
         //String imagePath = "tfIBzXWgD4XnyG3y2IjD08SgHeq1.jpg";
         StorageReference storageReference = mStorageRef.child(username + ".jpg");
 
-        Glide.with(this).using(new FirebaseImageLoader()).
+        Glide.with(getApplicationContext()).using(new FirebaseImageLoader()).
                 load(storageReference).asBitmap().into(new SimpleTarget<Bitmap>(100, 100) {
             @Override
             public void onResourceReady(Bitmap resource, GlideAnimation glideAnimation) {

@@ -32,6 +32,7 @@ import ee.ounapuu.herman.messenger.customListAdapter.CustomListAdapter;
  */
 
 public class ViewTopicFragment extends Fragment implements View.OnClickListener {
+    private static final int BASE_MESSAGE_KEEPALIVE_LENGTH_IN_MILLIS = 10000;
 
     ListView list;
     CustomListAdapter adapter;
@@ -69,15 +70,13 @@ public class ViewTopicFragment extends Fragment implements View.OnClickListener 
 
             @Override
             public boolean onQueryTextSubmit(String query) {
-               // Toast.makeText(getContext(), query, Toast.LENGTH_SHORT).show();
-                //todo: filtering should be here, simple regex match probably?
                 filterTopicsByString(query);
                 return false;
             }
 
             @Override
-            public boolean onQueryTextChange(String newText) {
-                //Toast.makeText(getContext(), "edit", Toast.LENGTH_SHORT).show();
+            public boolean onQueryTextChange(String query) {
+                filterTopicsByString(query);
                 return false;
             }
         });
@@ -170,7 +169,6 @@ public class ViewTopicFragment extends Fragment implements View.OnClickListener 
                 break;
             case R.id.button_usergen_choice:
                 setTopicsMode("usergen");
-
                 break;
         }
     }

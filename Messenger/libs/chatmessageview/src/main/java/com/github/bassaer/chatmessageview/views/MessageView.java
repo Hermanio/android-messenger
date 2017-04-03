@@ -3,6 +3,7 @@ package com.github.bassaer.chatmessageview.views;
 import android.content.Context;
 import android.os.Handler;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 
@@ -11,6 +12,7 @@ import com.github.bassaer.chatmessageview.utils.TimeUtils;
 import com.github.bassaer.chatmessageview.views.adapters.MessageAdapter;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -20,6 +22,7 @@ import java.util.TimerTask;
  */
 public class MessageView extends ListView implements View.OnFocusChangeListener{
 
+    private static final int BASE_MESSAGE_KEEPALIVE_LENGTH_IN_MILLIS = 10000;
     /**
      * All contents such as right message, left message, date label
      */
@@ -110,17 +113,24 @@ public class MessageView extends ListView implements View.OnFocusChangeListener{
             mChatList.add(message.getDateSeparateText());
         }else{
             //Get previous message to compare date
-            Message prevMessage = mMessageList.get(mMessageList.size() - 1);
+            if (mMessageList.size() > 1) {
+                Message prevMessage = mMessageList.get(mMessageList.size() - 1);
 
-            //This is just difference between days
-            if(TimeUtils.getDiffDays(prevMessage.getCreatedAt(), message.getCreatedAt()) != 0){
-                //Set date label because of different day
-                mChatList.add(message.getDateSeparateText());
+                //This is just difference between days
+                if(TimeUtils.getDiffDays(prevMessage.getCreatedAt(), message.getCreatedAt()) != 0){
+                    //Set date label because of different day
+                    mChatList.add(message.getDateSeparateText());
+                }
             }
-
         }
-        mChatList.add(message);
-        mMessageList.add(message);
+        if ((Calendar.getInstance().getTimeInMillis() - message.getCreatedAt().getTimeInMillis()) > BASE_MESSAGE_KEEPALIVE_LENGTH_IN_MILLIS) {
+            Log.d("message", Long.toString(Calendar.getInstance().getTimeInMillis() - message.getCreatedAt().getTimeInMillis()));
+        } else {
+            Log.d("message", Long.toString(Calendar.getInstance().getTimeInMillis() - message.getCreatedAt().getTimeInMillis()));
+            message.setmKeepAlive(BASE_MESSAGE_KEEPALIVE_LENGTH_IN_MILLIS - (int) (Calendar.getInstance().getTimeInMillis() - message.getCreatedAt().getTimeInMillis()));
+            mChatList.add(message);
+            mMessageList.add(message);
+        }
         mMessageAdapter.notifyDataSetChanged();
 
     }
