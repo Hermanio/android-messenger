@@ -301,25 +301,11 @@ public class ChatActivity extends AppCompatActivity {
         //Toast.makeText(getContext(), messageID, Toast.LENGTH_SHORT).show();
         newRef.setValue(completeMessage);
 
+        DatabaseReference topicRef = database.getReference("/topics/"+chatTopic+"/participants"+"/"+mAuth.getCurrentUser().getUid());
+        topicRef.setValue(mAuth.getCurrentUser().getUid());
+
         //DatabaseReference dbRefTopic = database.getReference("/topics/" + chatTopic + "/");
         //dbRefTopic.child("messages").push().setValue(messageID);
-    }
-
-    private void sendImageMessageToDB(String imageRef) {
-        //send message to messages, get id, then send message id to chat messages
-        ee.ounapuu.herman.messenger.CustomObjects.Message completeMessage =
-                new ee.ounapuu.herman.messenger.CustomObjects.Message(
-                        true,
-                        "",
-                        imageRef,
-                        System.currentTimeMillis(),
-                        mAuth.getCurrentUser().getEmail());
-        String messageID;
-        DatabaseReference dbRefMessages = database.getReference("/messages/" + chatTopic);
-        DatabaseReference newRef = dbRefMessages.push();
-        //Toast.makeText(getContext(), messageID, Toast.LENGTH_SHORT).show();
-        newRef.setValue(completeMessage);
-
     }
 
     private void getMessages(String chatName) {
