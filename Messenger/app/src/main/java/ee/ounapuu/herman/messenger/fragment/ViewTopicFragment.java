@@ -218,6 +218,9 @@ public class ViewTopicFragment extends Fragment implements View.OnClickListener 
             });
 
             adapter.notifyDataSetChanged();
+        } else {
+            adapter.clear();
+            adapter.notifyDataSetChanged();
         }
 
     }
