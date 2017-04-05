@@ -41,7 +41,9 @@
         android:id="@+id/searchview_topic"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        app:queryHint="Search...">
+        android:iconifiedByDefault="false"
+        android:clickable="true"
+        android:queryHint="Search for a topic...">
 
     </SearchView>
 
