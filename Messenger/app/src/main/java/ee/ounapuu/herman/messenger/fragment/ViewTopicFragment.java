@@ -129,7 +129,7 @@ public class ViewTopicFragment extends Fragment implements View.OnClickListener 
                     Log.d("length", "Length is for array " + itemname.size());
                 }
 
-                if (itemname.size() > 0) {
+                if (itemname.size() > 0 && itemname != null) {
 
                     adapter = new CustomListAdapter(getActivity(), itemname);
 
