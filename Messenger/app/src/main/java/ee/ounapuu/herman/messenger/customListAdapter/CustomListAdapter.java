@@ -53,8 +53,6 @@ public class CustomListAdapter extends ArrayAdapter<TopicListModel> {
         timestamp.setTimeInMillis(itemname.get(position).getLastActivity());
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-
-        //todo: replace with
         extratxt.setText("Last activity "+ dateFormat.format(timestamp.getTime()) + "\nParticipants "+itemname.get(position).getParticipantCount());
         setIconToItem(itemname.get(position).getTitle(), imageView);
         return rowView;

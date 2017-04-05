@@ -17,4 +17,5 @@
     <string name="enter_topic_name">Enter topic name</string>
     <string name="chat_name_placeholder">No chat chosen</string>
     <string name="add_new_topic">Add new topic</string>
+    <string name="cancel">Cancel</string>
 </resources>

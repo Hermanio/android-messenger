@@ -103,6 +103,10 @@ public class RegisterActivity extends Activity {
         };
     }
 
+    public void cancelRegistration(View view) {
+        finish();
+    }
+
     @Override
     public void onStart() {
         super.onStart();
