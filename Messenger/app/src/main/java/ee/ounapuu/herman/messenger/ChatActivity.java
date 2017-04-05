@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -304,6 +305,8 @@ public class ChatActivity extends AppCompatActivity {
         DatabaseReference topicRef = database.getReference("/topics/"+chatTopic+"/participants"+"/"+mAuth.getCurrentUser().getUid());
         topicRef.setValue(mAuth.getCurrentUser().getUid());
 
+        DatabaseReference topicLastActivityTimeRef = database.getReference("/topics/"+chatTopic+"/lastActivity/");
+        topicLastActivityTimeRef.setValue(Calendar.getInstance().getTimeInMillis());
         //DatabaseReference dbRefTopic = database.getReference("/topics/" + chatTopic + "/");
         //dbRefTopic.child("messages").push().setValue(messageID);
     }

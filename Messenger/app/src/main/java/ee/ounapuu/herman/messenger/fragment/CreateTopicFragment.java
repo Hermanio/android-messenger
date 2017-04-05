@@ -16,6 +16,7 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,14 +31,18 @@ import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import ee.ounapuu.herman.messenger.ChatActivity;
@@ -205,6 +210,7 @@ public class CreateTopicFragment extends Fragment implements View.OnClickListene
                 break;
         }
     }
+
     public void chooseImage(View view) {
         final String[] items = {"Take Photo", "Choose from Library", "Cancel"};
 
@@ -234,54 +240,94 @@ public class CreateTopicFragment extends Fragment implements View.OnClickListene
         });
         builder.show();
     }
-    private void createNewTopic(Bitmap image, final String topicName) {
-        if (image == null && topicName.equals("")) {
-            Toast.makeText(getContext(), "Please choose a topic name and image!", Toast.LENGTH_SHORT).show();
-            return;
-        } else if (image == null) {
-            Toast.makeText(getContext(), "Please choose an image!", Toast.LENGTH_SHORT).show();
-            return;
-        } else if (topicName.equals("")) {
-            Toast.makeText(getContext(), "Please choose a topic name!", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        //todo replace with topic name
-        //Toast.makeText(getContext(), "New topic create start", Toast.LENGTH_SHORT).show();
-        StorageReference uploadImageReference = mStorageRef.child(topicName + ".jpg");
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        image.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-        byte[] data = baos.toByteArray();
-
-        UploadTask uploadTask = uploadImageReference.putBytes(data);
-        uploadTask.addOnFailureListener(new OnFailureListener() {
+    private void createNewTopic(final Bitmap image, final String topicName) {
+        dbRef.child("/topics/" + topicName + "/").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onFailure(@NonNull Exception exception) {
-                // Handle unsuccessful uploads
-                Toast.makeText(getContext(), "upload failure", Toast.LENGTH_SHORT).show();
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    Toast.makeText(getContext(), "exists", Toast.LENGTH_SHORT).show();
+                    final String[] items = {"Join thread", "Cancel"};
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                    builder.setTitle("Topic already exists, do you want to join it?");
+                    builder.setItems(items, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            switch (items[which]) {
+                                case "Join thread":
+                                    Intent i = new Intent(getActivity(), ChatActivity.class);
+                                    i.putExtra("topicName", topicName);
+                                    startActivity(i);
+                                    clearViewData();
+                                    break;
+                                case "Cancel":
+                                    dialog.dismiss();
+                                    break;
+                                default:
+                                    dialog.dismiss();
+                            }
+                        }
+                    });
+                    builder.show();
+                } else {
+                    Toast.makeText(getContext(), "does not exist", Toast.LENGTH_SHORT).show();
+                    if (image == null && topicName.equals("")) {
+                        Toast.makeText(getContext(), "Please choose a topic name and image!", Toast.LENGTH_SHORT).show();
+                        return;
+                    } else if (image == null) {
+                        Toast.makeText(getContext(), "Please choose an image!", Toast.LENGTH_SHORT).show();
+                        return;
+                    } else if (topicName.equals("")) {
+                        Toast.makeText(getContext(), "Please choose a topic name!", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    //todo replace with topic name
+                    //Toast.makeText(getContext(), "New topic create start", Toast.LENGTH_SHORT).show();
+                    StorageReference uploadImageReference = mStorageRef.child(topicName + ".jpg");
+
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    image.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                    byte[] data = baos.toByteArray();
+
+                    UploadTask uploadTask = uploadImageReference.putBytes(data);
+                    uploadTask.addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            // Handle unsuccessful uploads
+                            Toast.makeText(getContext(), "upload failure", Toast.LENGTH_SHORT).show();
+                        }
+                    }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                            Toast.makeText(getContext(), "Upload done!", Toast.LENGTH_SHORT).show();
+
+                            List<String> participants = new ArrayList<String>();
+                            List<String> messages = new ArrayList<String>();
+                            participants.add(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+                            Topic topic = new Topic(topicName, participants, messages, topicName + ".jpg", false);
+
+                            dbRef.child("topics").child(topicName).setValue(topic);
+                            changeTopicPicture(topicName);
+
+                            DatabaseReference topicLastActivityTimeRef = database.getReference("/topics/" + topicName + "/lastActivity/");
+                            topicLastActivityTimeRef.setValue(Calendar.getInstance().getTimeInMillis());
+
+                            Intent i = new Intent(getActivity(), ChatActivity.class);
+                            i.putExtra("topicName", topicName);
+                            startActivity(i);
+                            clearViewData();
+
+                        }
+                    });
+                }
             }
-        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+
             @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+            public void onCancelled(DatabaseError databaseError) {
 
-                Toast.makeText(getContext(), "Upload done!", Toast.LENGTH_SHORT).show();
-
-                List<String> participants = new ArrayList<String>();
-                List<String> messages = new ArrayList<String>();
-                participants.add(FirebaseAuth.getInstance().getCurrentUser().getUid());
-
-                Topic topic = new Topic(topicName, participants, messages, topicName + ".jpg", false);
-
-                dbRef.child("topics").child(topicName).setValue(topic);
-                changeTopicPicture(topicName);
-                //Toast.makeText(getContext(), "Tried sending messge", Toast.LENGTH_SHORT).show();
-
-
-                //((MainActivity) getActivity()).changeToChatView(topicName);
-                //todo: open ChatActivity with proper data
-                Intent i = new Intent(getActivity(), ChatActivity.class);
-                i.putExtra("topicName", topicName);
-                startActivity(i);
             }
         });
     }
@@ -292,5 +338,13 @@ public class CreateTopicFragment extends Fragment implements View.OnClickListene
                 load(uploadImageReference).
                 signature(new StringSignature(String.valueOf(System.currentTimeMillis())))
                 .into(newTopicImage);
+    }
+
+    private void clearViewData() {
+        getFragmentManager()
+                .beginTransaction()
+                .detach(this)
+                .attach(this)
+                .commitAllowingStateLoss();
     }
 }

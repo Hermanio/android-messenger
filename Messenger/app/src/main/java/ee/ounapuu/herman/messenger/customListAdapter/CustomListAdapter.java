@@ -14,20 +14,23 @@ import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
+import ee.ounapuu.herman.messenger.CustomObjects.TopicListModel;
 import ee.ounapuu.herman.messenger.R;
 
-public class CustomListAdapter extends ArrayAdapter<String> {
+public class CustomListAdapter extends ArrayAdapter<TopicListModel> {
 
     private final Activity context;
-    private final ArrayList<String> itemname;
+    private final ArrayList<TopicListModel> itemname;
 
 
     private StorageReference mStorageRef;
 
 
-    public CustomListAdapter(Activity context, ArrayList<String> itemname) {
+    public CustomListAdapter(Activity context, ArrayList<TopicListModel> itemname) {
         super(context, R.layout.custom_list, itemname);
 
         this.context = context;
@@ -44,12 +47,16 @@ public class CustomListAdapter extends ArrayAdapter<String> {
         ImageView imageView = (ImageView) rowView.findViewById(R.id.icon);
         TextView extratxt = (TextView) rowView.findViewById(R.id.textView1);
 
-        txtTitle.setText(itemname.get(position));
+        txtTitle.setText(itemname.get(position).getTitle());
+
+        Calendar timestamp = Calendar.getInstance();
+        timestamp.setTimeInMillis(itemname.get(position).getLastActivity());
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
 
         //todo: replace with
-        extratxt.setText("Placeholder description for topic " + itemname.get(position));
-
-        setIconToItem(itemname.get(position), imageView);
+        extratxt.setText("Last activity "+ dateFormat.format(timestamp.getTime()) + "\nParticipants "+itemname.get(position).getParticipantCount());
+        setIconToItem(itemname.get(position).getTitle(), imageView);
         return rowView;
 
     }

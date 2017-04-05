@@ -23,6 +23,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 
 import ee.ounapuu.herman.messenger.ChatActivity;
+import ee.ounapuu.herman.messenger.CustomObjects.TopicListModel;
 import ee.ounapuu.herman.messenger.MainActivity;
 import ee.ounapuu.herman.messenger.R;
 import ee.ounapuu.herman.messenger.customListAdapter.CustomListAdapter;
@@ -36,7 +37,7 @@ public class ViewTopicFragment extends Fragment implements View.OnClickListener 
 
     ListView list;
     CustomListAdapter adapter;
-    ArrayList<String> itemname;
+    ArrayList<TopicListModel> itemname;
 
     private DatabaseReference mDatabase;
     private Query getAllTopicsQuery;
@@ -110,13 +111,15 @@ public class ViewTopicFragment extends Fragment implements View.OnClickListener 
                 if (displayMode.equals("FEATURED")) {
                     for (DataSnapshot topicSnapShot : dataSnapshot.getChildren()) {
                         if (Boolean.parseBoolean(topicSnapShot.child("isStaticTopic").getValue().toString())) {
-                                itemname.add(topicSnapShot.getKey());
+                                itemname.add(new TopicListModel(topicSnapShot.getKey(), Long.parseLong(topicSnapShot.child("lastActivity").getValue().toString()), topicSnapShot.child("participants").getChildrenCount()));
                         }
                     }
                 } else {
                     for (DataSnapshot topicSnapShot : dataSnapshot.getChildren()) {
                         if (!Boolean.parseBoolean(topicSnapShot.child("isStaticTopic").getValue().toString())) {
-                                itemname.add(topicSnapShot.getKey());
+                            if (topicSnapShot.child("lastActivity") != null) {
+                                itemname.add(new TopicListModel(topicSnapShot.getKey(), Long.parseLong(topicSnapShot.child("lastActivity").getValue().toString()), topicSnapShot.child("participants").getChildrenCount()));
+                            }
                         }
                     }
                 }
@@ -127,6 +130,7 @@ public class ViewTopicFragment extends Fragment implements View.OnClickListener 
                 }
 
                 if (itemname.size() > 0) {
+
                     adapter = new CustomListAdapter(getActivity(), itemname);
 
                     list = (ListView) view.findViewById(R.id.customlist);
@@ -137,11 +141,11 @@ public class ViewTopicFragment extends Fragment implements View.OnClickListener 
                         @Override
                         public void onItemClick(AdapterView<?> parent, View view,
                                                 int position, long id) {
-                            String selectedItem = itemname.get(position);
+                            TopicListModel selectedItem = itemname.get(position);
                             // Toast.makeText(getContext(), selectedItem, Toast.LENGTH_SHORT).show();
 
                             Intent i = new Intent(getActivity(), ChatActivity.class);
-                            i.putExtra("topicName", selectedItem);
+                            i.putExtra("topicName", selectedItem.getTitle());
                             startActivity(i);
 
                         }
@@ -190,9 +194,9 @@ public class ViewTopicFragment extends Fragment implements View.OnClickListener 
     }
 
     private void filterTopicsByString(String searchQuery) {
-        final ArrayList<String> matchingTopicNames = new ArrayList<>();
-        for (String item : itemname) {
-            if (item.contains(searchQuery)) {
+        final ArrayList<TopicListModel> matchingTopicNames = new ArrayList<>();
+        for (TopicListModel item : itemname) {
+            if (item.getTitle().contains(searchQuery)) {
                 matchingTopicNames.add(item);
             }
         }
@@ -207,10 +211,10 @@ public class ViewTopicFragment extends Fragment implements View.OnClickListener 
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view,
                                         int position, long id) {
-                    String selectedItem = matchingTopicNames.get(position);
+                    TopicListModel selectedItem = matchingTopicNames.get(position);
 
                     Intent i = new Intent(getActivity(), ChatActivity.class);
-                    i.putExtra("topicName", selectedItem);
+                    i.putExtra("topicName", selectedItem.getTitle());
                     startActivity(i);
                 }
             });
