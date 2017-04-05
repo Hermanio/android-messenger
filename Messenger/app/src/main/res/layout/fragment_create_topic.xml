@@ -15,7 +15,6 @@
         android:inputType="textPersonName"
       />
 
-
     <ImageView
         android:id="@+id/newTopicImageView"
         android:layout_width="180dp"
@@ -26,37 +25,25 @@
         android:src="@drawable/placeholder" />
 
     <Button
-        android:id="@+id/chooseImageFromCameraButton"
+        android:id="@+id/chooseImageButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/newTopicImageView"
-        android:layout_alignStart="@+id/newTopicImageView"
-        android:layout_below="@+id/newTopicImageView"
-        android:layout_marginTop="29dp"
         android:onClick="chooseImageFromCamera"
-        android:text="Choose image from camera" />
-
-    <Button
-        android:id="@+id/chooseImageFromGalleryButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/chooseImageFromCameraButton"
-        android:layout_alignStart="@+id/chooseImageFromCameraButton"
-        android:layout_below="@+id/chooseImageFromCameraButton"
-        android:layout_marginTop="15dp"
-        android:onClick="chooseImageFromGallery"
-        android:text="Choose image from gallery" />
+        android:text="@string/choose_image"
+        android:layout_below="@+id/newTopicImageView"
+        android:layout_alignStart="@+id/newTopicImageView"
+        android:layout_alignEnd="@+id/newTopicImageView" />
 
     <Button
         android:id="@+id/button_add_new_topic"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/chooseImageFromGalleryButton"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="23dp"
+        android:layout_marginTop="14dp"
         android:onClick="create"
+        android:text="@string/add_new_topic"
+        android:layout_below="@+id/chooseImageButton"
+        android:layout_centerHorizontal="true" />
 
-        android:text="Add new topic" />
 </RelativeLayout>
 
 

@@ -102,12 +102,8 @@ public class CreateTopicFragment extends Fragment implements View.OnClickListene
 
         //bottomNavigationView = (BottomNavigationView) view.findViewById(R.id.navigation);
 
-        Button cameraImagePickerButton = (Button) view.findViewById(R.id.chooseImageFromCameraButton);
+        Button cameraImagePickerButton = (Button) view.findViewById(R.id.chooseImageButton);
         cameraImagePickerButton.setOnClickListener(this);
-
-        Button galleryImagePickerButton = (Button) view.findViewById(R.id.chooseImageFromGalleryButton);
-        galleryImagePickerButton.setOnClickListener(this);
-
 
         return view;
     }
@@ -201,8 +197,7 @@ public class CreateTopicFragment extends Fragment implements View.OnClickListene
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.chooseImageFromCameraButton:
-            case R.id.chooseImageFromGalleryButton:
+            case R.id.chooseImageButton:
                 chooseImage(view);
                 break;
             case R.id.button_add_new_topic:
