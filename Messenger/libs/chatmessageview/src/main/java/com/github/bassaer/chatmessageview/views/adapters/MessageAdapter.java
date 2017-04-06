@@ -44,7 +44,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 public class MessageAdapter extends ArrayAdapter<Object> {
 
-    //todo: look into setting new adapter every time data changes OR remove some keyboard/scroll related events?
+    private static final int BASE_MESSAGE_KEEPALIVE_LENGTH_IN_MILLIS = 10000;
     private LayoutInflater mLayoutInflater;
     private final Context context;
 
@@ -344,6 +344,7 @@ public class MessageAdapter extends ArrayAdapter<Object> {
             Animation fadeOut = new AlphaAnimation(1, 0);
             fadeOut.setInterpolator(new AccelerateInterpolator());
             //fadeOut.setStartOffset(5000);
+            message.setmKeepAlive(BASE_MESSAGE_KEEPALIVE_LENGTH_IN_MILLIS - (int) (Calendar.getInstance().getTimeInMillis() - message.getCreatedAt().getTimeInMillis()));
             fadeOut.setDuration(message.getmKeepAlive());
             fadeOut.setRepeatCount(0);
             convertView.setAnimation(fadeOut);

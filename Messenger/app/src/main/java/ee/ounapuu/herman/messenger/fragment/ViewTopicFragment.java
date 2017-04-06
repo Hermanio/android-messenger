@@ -1,6 +1,5 @@
 package ee.ounapuu.herman.messenger.fragment;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,6 +11,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
@@ -21,12 +21,15 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 
 import ee.ounapuu.herman.messenger.ChatActivity;
 import ee.ounapuu.herman.messenger.CustomObjects.TopicListModel;
-import ee.ounapuu.herman.messenger.MainActivity;
 import ee.ounapuu.herman.messenger.R;
 import ee.ounapuu.herman.messenger.customListAdapter.CustomListAdapter;
 
@@ -40,7 +43,7 @@ public class ViewTopicFragment extends Fragment implements View.OnClickListener 
 
     ListView list;
     CustomListAdapter adapter;
-    ArrayList<TopicListModel> itemname;
+    ArrayList<TopicListModel> topicListItems;
 
     private DatabaseReference mDatabase;
     private Query getAllTopicsQuery;
@@ -105,16 +108,16 @@ public class ViewTopicFragment extends Fragment implements View.OnClickListener 
         super.onDestroy();
     }
 
-    private void setDataUpdateListener(final View view){
+    private void setDataUpdateListener(final View view) {
         dataUpdateListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                itemname = new ArrayList<>();
+                topicListItems = new ArrayList<>();
                 Log.d("length", "Length is " + dataSnapshot.getChildrenCount());
                 if (displayMode.equals("FEATURED")) {
                     for (DataSnapshot topicSnapShot : dataSnapshot.getChildren()) {
                         if (Boolean.parseBoolean(topicSnapShot.child("isStaticTopic").getValue().toString())) {
-                                itemname.add(new TopicListModel(topicSnapShot.getKey(), Long.parseLong(topicSnapShot.child("lastActivity").getValue().toString()), topicSnapShot.child("participants").getChildrenCount()));
+                            topicListItems.add(new TopicListModel(topicSnapShot.getKey(), Long.parseLong(topicSnapShot.child("lastActivity").getValue().toString()), topicSnapShot.child("participants").getChildrenCount()));
                         }
                     }
                 } else {
@@ -122,23 +125,32 @@ public class ViewTopicFragment extends Fragment implements View.OnClickListener 
                         if (!Boolean.parseBoolean(topicSnapShot.child("isStaticTopic").getValue().toString())) {
                             if (topicSnapShot.child("lastActivity").getValue() != null) {
                                 if (!isTopicOld(topicSnapShot.child("lastActivity").getValue().toString()))
-                                itemname.add(new TopicListModel(topicSnapShot.getKey(), Long.parseLong(topicSnapShot.child("lastActivity").getValue().toString()), topicSnapShot.child("participants").getChildrenCount()));
+                                    topicListItems.add(new TopicListModel(topicSnapShot.getKey(), Long.parseLong(topicSnapShot.child("lastActivity").getValue().toString()), topicSnapShot.child("participants").getChildrenCount()));
                             }
                         }
                     }
                 }
 
 
-                if (itemname != null) {
-                    Log.d("length", "Length is for array " + itemname.size());
+                if (topicListItems != null) {
+                    Log.d("length", "Length is for array " + topicListItems.size());
                 }
 
-                if (itemname.size() > 0 && itemname != null) {
+                if (topicListItems != null) {
+
                     //todo: look into why this keeps returning null,
                     //possibly because we are not removing listener from a background fragment?
                     if (getActivity() != null) {
 
-                        adapter = new CustomListAdapter(getActivity(), itemname);
+                        if (topicListItems.size()== 0) {
+                            //show the thing
+                            TextView noSearchFoundText = (TextView) view.findViewById(R.id.search_no_results_text);
+
+                        }
+                        //sorting before giving it to adapter
+                        sortTopicListItemsByActivity();
+
+                        adapter = new CustomListAdapter(getActivity(), topicListItems);
 
                         list = (ListView) view.findViewById(R.id.customlist);
                         list.setAdapter(adapter);
@@ -148,7 +160,7 @@ public class ViewTopicFragment extends Fragment implements View.OnClickListener 
                             @Override
                             public void onItemClick(AdapterView<?> parent, View view,
                                                     int position, long id) {
-                                TopicListModel selectedItem = itemname.get(position);
+                                TopicListModel selectedItem = topicListItems.get(position);
                                 // Toast.makeText(getContext(), selectedItem, Toast.LENGTH_SHORT).show();
 
                                 Intent i = new Intent(getActivity(), ChatActivity.class);
@@ -184,6 +196,7 @@ public class ViewTopicFragment extends Fragment implements View.OnClickListener 
         }
         return false;
     }
+
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
@@ -213,15 +226,15 @@ public class ViewTopicFragment extends Fragment implements View.OnClickListener 
     }
 
     private void filterTopicsByString(String searchQuery) {
-        final ArrayList<TopicListModel> matchingTopicNames = new ArrayList<>();
-        for (TopicListModel item : itemname) {
+        final ArrayList<TopicListModel> matchingTopicListItems = new ArrayList<>();
+        for (TopicListModel item : topicListItems) {
             if (item.getTitle().contains(searchQuery)) {
-                matchingTopicNames.add(item);
+                matchingTopicListItems.add(item);
             }
         }
 
-        if (matchingTopicNames.size() > 0 ) {
-            adapter = new CustomListAdapter(getActivity(), matchingTopicNames);
+        if (matchingTopicListItems.size() > 0) {
+            adapter = new CustomListAdapter(getActivity(), matchingTopicListItems);
 
             list.setAdapter(adapter);
 
@@ -230,7 +243,7 @@ public class ViewTopicFragment extends Fragment implements View.OnClickListener 
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view,
                                         int position, long id) {
-                    TopicListModel selectedItem = matchingTopicNames.get(position);
+                    TopicListModel selectedItem = matchingTopicListItems.get(position);
 
                     Intent i = new Intent(getActivity(), ChatActivity.class);
                     i.putExtra("topicName", selectedItem.getTitle());
@@ -246,4 +259,13 @@ public class ViewTopicFragment extends Fragment implements View.OnClickListener 
 
     }
 
+    private void sortTopicListItemsByActivity() {
+        Collections.sort(topicListItems, new Comparator<TopicListModel>() {
+            @Override
+            public int compare(TopicListModel topic1, TopicListModel topic2) {
+                return (int) (topic2.getLastActivity() - topic1.getLastActivity());
+            }
+
+        });
+    }
 }
