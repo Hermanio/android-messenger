@@ -22,6 +22,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import ee.ounapuu.herman.messenger.ChatActivity;
 import ee.ounapuu.herman.messenger.CustomObjects.TopicListModel;
@@ -35,6 +36,7 @@ import ee.ounapuu.herman.messenger.customListAdapter.CustomListAdapter;
 
 public class ViewTopicFragment extends Fragment implements View.OnClickListener {
     private static final int BASE_MESSAGE_KEEPALIVE_LENGTH_IN_MILLIS = 10000;
+    private static final int TOPIC_KEEPALIVE_LENGTH_IN_MILLIS = 60000;
 
     ListView list;
     CustomListAdapter adapter;
@@ -118,7 +120,8 @@ public class ViewTopicFragment extends Fragment implements View.OnClickListener 
                 } else {
                     for (DataSnapshot topicSnapShot : dataSnapshot.getChildren()) {
                         if (!Boolean.parseBoolean(topicSnapShot.child("isStaticTopic").getValue().toString())) {
-                            if (topicSnapShot.child("lastActivity") != null) {
+                            if (topicSnapShot.child("lastActivity").getValue() != null) {
+                                if (!isTopicOld(topicSnapShot.child("lastActivity").getValue().toString()))
                                 itemname.add(new TopicListModel(topicSnapShot.getKey(), Long.parseLong(topicSnapShot.child("lastActivity").getValue().toString()), topicSnapShot.child("participants").getChildrenCount()));
                             }
                         }
@@ -173,6 +176,14 @@ public class ViewTopicFragment extends Fragment implements View.OnClickListener 
         };
     }
 
+    private boolean isTopicOld(String lastActivityTimestamp) {
+        long lastActivityInMillis = Long.parseLong(lastActivityTimestamp);
+        long currentTimeInMillis = Calendar.getInstance().getTimeInMillis();
+        if (lastActivityInMillis + TOPIC_KEEPALIVE_LENGTH_IN_MILLIS < currentTimeInMillis) {
+            return true;
+        }
+        return false;
+    }
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
