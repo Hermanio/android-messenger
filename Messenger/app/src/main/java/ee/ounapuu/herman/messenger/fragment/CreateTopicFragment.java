@@ -118,28 +118,6 @@ public class CreateTopicFragment extends Fragment implements View.OnClickListene
         super.onDestroyView();
     }
 
-    public void chooseImageFromCamera(View view) {
-        Intent takePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(takePhotoIntent, REQUEST_CAMERA);
-        //Toast.makeText(getContext(), "Choosing img from camera", Toast.LENGTH_SHORT).show();
-    }
-
-    public void chooseImageFromGallery(View view) {
-        //Toast.makeText(getContext(), "Choose img from gallery", Toast.LENGTH_SHORT).show();
-
-        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_STORAGE_PERMISSION);
-            openPhotoSelect();
-        } else {
-            openPhotoSelect();
-        }
-
-
-    }
-
-
-    /* Pastebin code example stuff below */
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == REQUEST_STORAGE_PERMISSION) {
@@ -237,6 +215,16 @@ public class CreateTopicFragment extends Fragment implements View.OnClickListene
     }
 
     private void createNewTopic(final Bitmap image, final String topicName) {
+        if (image == null && topicName.equals("")) {
+            Toast.makeText(getContext(), "Please choose a topic name and image!", Toast.LENGTH_SHORT).show();
+            return;
+        } else if (image == null) {
+            Toast.makeText(getContext(), "Please choose an image!", Toast.LENGTH_SHORT).show();
+            return;
+        } else if (topicName.equals("")) {
+            Toast.makeText(getContext(), "Please choose a topic name!", Toast.LENGTH_SHORT).show();
+            return;
+        }
         dbRef.child("/topics/" + topicName + "/").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -267,16 +255,7 @@ public class CreateTopicFragment extends Fragment implements View.OnClickListene
                     builder.show();
                 } else {
                     Toast.makeText(getContext(), "does not exist", Toast.LENGTH_SHORT).show();
-                    if (image == null && topicName.equals("")) {
-                        Toast.makeText(getContext(), "Please choose a topic name and image!", Toast.LENGTH_SHORT).show();
-                        return;
-                    } else if (image == null) {
-                        Toast.makeText(getContext(), "Please choose an image!", Toast.LENGTH_SHORT).show();
-                        return;
-                    } else if (topicName.equals("")) {
-                        Toast.makeText(getContext(), "Please choose a topic name!", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
+
                     //todo replace with topic name
                     //Toast.makeText(getContext(), "New topic create start", Toast.LENGTH_SHORT).show();
                     StorageReference uploadImageReference = mStorageRef.child(topicName + ".jpg");

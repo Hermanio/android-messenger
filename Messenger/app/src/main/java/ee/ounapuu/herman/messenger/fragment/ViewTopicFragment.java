@@ -1,5 +1,6 @@
 package ee.ounapuu.herman.messenger.fragment;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
@@ -130,26 +131,33 @@ public class ViewTopicFragment extends Fragment implements View.OnClickListener 
                 }
 
                 if (itemname.size() > 0 && itemname != null) {
+                    //todo: look into why this keeps returning null,
+                    //possibly because we are not removing listener from a background fragment?
+                    if (getActivity() != null) {
 
-                    adapter = new CustomListAdapter(getActivity(), itemname);
+                        adapter = new CustomListAdapter(getActivity(), itemname);
 
-                    list = (ListView) view.findViewById(R.id.customlist);
-                    list.setAdapter(adapter);
+                        list = (ListView) view.findViewById(R.id.customlist);
+                        list.setAdapter(adapter);
 
-                    list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
-                        @Override
-                        public void onItemClick(AdapterView<?> parent, View view,
-                                                int position, long id) {
-                            TopicListModel selectedItem = itemname.get(position);
-                            // Toast.makeText(getContext(), selectedItem, Toast.LENGTH_SHORT).show();
+                            @Override
+                            public void onItemClick(AdapterView<?> parent, View view,
+                                                    int position, long id) {
+                                TopicListModel selectedItem = itemname.get(position);
+                                // Toast.makeText(getContext(), selectedItem, Toast.LENGTH_SHORT).show();
 
-                            Intent i = new Intent(getActivity(), ChatActivity.class);
-                            i.putExtra("topicName", selectedItem.getTitle());
-                            startActivity(i);
+                                Intent i = new Intent(getActivity(), ChatActivity.class);
+                                i.putExtra("topicName", selectedItem.getTitle());
+                                startActivity(i);
 
-                        }
-                    });
+                            }
+                        });
+                    } else {
+                        Log.d("errors", "onDataChange: what the hell why is this null");
+                    }
+
                 } else {
                     Log.d("adapter", "no items sent to adapter");
                 }
