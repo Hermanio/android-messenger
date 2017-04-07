@@ -74,6 +74,9 @@ public class CreateTopicFragment extends Fragment implements View.OnClickListene
     private Button addTopicButton;
     private BottomNavigationView bottomNavigationView;
 
+    private FirebaseAuth mAuth = FirebaseAuth.getInstance();
+
+
     public static CreateTopicFragment newInstance() {
         CreateTopicFragment fragment = new CreateTopicFragment();
         return fragment;
@@ -277,17 +280,20 @@ public class CreateTopicFragment extends Fragment implements View.OnClickListene
 
                             Toast.makeText(getContext(), "Upload done!", Toast.LENGTH_SHORT).show();
 
-                            List<String> participants = new ArrayList<String>();
+                           // List<String> participants = new ArrayList<String>();
                             List<String> messages = new ArrayList<String>();
-                            participants.add(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                            //participants.add(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
-                            Topic topic = new Topic(topicName, participants, messages, topicName + ".jpg", false);
+                            Topic topic = new Topic(topicName, null, messages, topicName + ".jpg", false);
 
                             dbRef.child("topics").child(topicName).setValue(topic);
                             changeTopicPicture(topicName);
 
                             DatabaseReference topicLastActivityTimeRef = database.getReference("/topics/" + topicName + "/lastActivity/");
                             topicLastActivityTimeRef.setValue(Calendar.getInstance().getTimeInMillis());
+
+                            DatabaseReference topicRef = database.getReference("/topics/"+topicName+"/participants"+"/"+mAuth.getCurrentUser().getUid());
+                            topicRef.setValue(mAuth.getCurrentUser().getUid());
 
                             Intent i = new Intent(getActivity(), ChatActivity.class);
                             i.putExtra("topicName", topicName);
