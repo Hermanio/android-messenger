@@ -1,57 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="ee.ounapuu.herman.messenger.fragment.ProfileViewFragment"
-    android:configChanges="keyboardHidden|orientation|screenSize"
-    >
+    android:configChanges="keyboardHidden|orientation|screenSize">
 
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    <TextView
+        android:id="@+id/profileUsernameText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:gravity="center_vertical|center_horizontal"
+        android:text="@string/profile_default_username"
+        android:textSize="30sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_constraintBottom_creator="1"
+        tools:layout_constraintLeft_creator="1"
+        tools:layout_constraintRight_creator="1"
+        tools:layout_constraintTop_creator="1" />
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" >
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="53dp"
-                android:text="@string/profile_default_username"
-                android:textSize="30sp"
-                android:id="@+id/profileUsernameText" />
+    <ImageView
+        android:id="@+id/profileImage"
+        android:layout_width="235dp"
+        android:layout_height="250dp"
+        android:layout_marginBottom="32dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="32dp"
+        android:adjustViewBounds="false"
+        android:background="@drawable/ic_person_black_180dp_img_placeholder"
+        android:cropToPadding="false"
+        android:saveEnabled="false"
+        app:layout_constraintBottom_toTopOf="@+id/chooseImageButton"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/profileUsernameText"
+        app:layout_constraintVertical_bias="0.474"
+        tools:layout_conversion_absoluteHeight="180dp"
+        tools:layout_conversion_absoluteWidth="180dp"
+        tools:layout_conversion_absoluteX="90dp"
+        tools:layout_conversion_absoluteY="108dp"
+        app:layout_constraintHorizontal_bias="0.501" />
 
-            <ImageView
-                android:id="@+id/profileImage"
-                android:layout_width="180dp"
-                android:layout_height="180dp"
-                android:layout_below="@+id/profileUsernameText"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="20dp"
-                android:background="@drawable/ic_person_black_180dp_img_placeholder"
-                android:saveEnabled="false"
-                android:src="@drawable/ic_person_black_180dp_img_placeholder" />
-
-            <Button
-                android:id="@+id/chooseImageButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignEnd="@+id/profileImage"
-                android:layout_alignStart="@+id/profileImage"
-                android:layout_below="@+id/profileImage"
-                android:layout_marginTop="29dp"
-                android:onClick="chooseImageFromCamera"
-                android:text="@string/choose_image" />
+    <Button
+        android:id="@+id/chooseImageButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:onClick="chooseImageFromCamera"
+        android:text="@string/choose_image"
+        tools:layout_conversion_absoluteX="90dp"
+        tools:layout_conversion_absoluteY="317dp"
+        tools:layout_conversion_absoluteWidth="180dp"
+        tools:layout_conversion_absoluteHeight="48dp"
+        android:layout_marginLeft="8dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginRight="8dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="11dp"
+        app:layout_constraintHorizontal_bias="0.506" />
 
 
-        </RelativeLayout>
-    </ScrollView>
-
-
-</RelativeLayout>
+</android.support.constraint.ConstraintLayout>

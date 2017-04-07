@@ -145,7 +145,10 @@ public class ViewTopicFragment extends Fragment implements View.OnClickListener 
                         if (topicListItems.size()== 0) {
                             //show the thing
                             TextView noSearchFoundText = (TextView) view.findViewById(R.id.search_no_results_text);
-
+                            noSearchFoundText.setVisibility(View.VISIBLE);
+                        } else {
+                            TextView noSearchFoundText = (TextView) view.findViewById(R.id.search_no_results_text);
+                            noSearchFoundText.setVisibility(View.GONE);
                         }
                         //sorting before giving it to adapter
                         sortTopicListItemsByActivity();
@@ -213,13 +216,13 @@ public class ViewTopicFragment extends Fragment implements View.OnClickListener 
         getAllTopicsQuery.removeEventListener(dataUpdateListener);
         if (topicsMode.equals("featured")) {
             this.displayMode = "FEATURED";
-            Toast.makeText(getContext(), "featured", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getContext(), "featured", Toast.LENGTH_SHORT).show();
             getAllTopicsQuery = mDatabase.child("topics").orderByValue();
             getAllTopicsQuery.addValueEventListener(dataUpdateListener);
         } else {
             this.displayMode = "USERGEN";
 
-            Toast.makeText(getContext(), "usergen", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getContext(), "usergen", Toast.LENGTH_SHORT).show();
             getAllTopicsQuery = mDatabase.child("topics").orderByValue();
             getAllTopicsQuery.addValueEventListener(dataUpdateListener);
         }

@@ -72,8 +72,8 @@ public class RegisterActivity extends Activity {
                             Log.d("userdata", mAuth.getCurrentUser().getUid());
                             addNewUserInfoToDB(userinfo.getUid(), userinfo.getEmail(), userinfo.getDisplayName());
 
-                            Intent i = new Intent(getApplicationContext(), MainActivity.class);
-                            startActivity(i);
+                            //Intent i = new Intent(RegisterActivity.this, MainActivity.class);
+                            //startActivity(i);
                             finish();
                         }
                     }
@@ -94,8 +94,8 @@ public class RegisterActivity extends Activity {
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
-                    Intent i = new Intent(RegisterActivity.this, MainActivity.class);
-                    startActivity(i);
+                    //Intent i = new Intent(RegisterActivity.this, MainActivity.class);
+                    //startActivity(i);
                     finish();
                 } else {
                 }

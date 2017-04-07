@@ -229,7 +229,7 @@ public class CreateTopicFragment extends Fragment implements View.OnClickListene
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
-                    Toast.makeText(getContext(), "exists", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getContext(), "exists", Toast.LENGTH_SHORT).show();
                     final String[] items = {"Join thread", "Cancel"};
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -254,7 +254,7 @@ public class CreateTopicFragment extends Fragment implements View.OnClickListene
                     });
                     builder.show();
                 } else {
-                    Toast.makeText(getContext(), "does not exist", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getContext(), "does not exist", Toast.LENGTH_SHORT).show();
 
                     //todo replace with topic name
                     //Toast.makeText(getContext(), "New topic create start", Toast.LENGTH_SHORT).show();
