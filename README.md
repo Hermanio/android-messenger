@@ -1,7 +1,9 @@
 # android-messenger
 Made as a homework project in 2017 as part of course *Mobile applications (ITV0140).*
 
-Features:
+![gif](https://github.com/Hermanio/android-messenger/blob/master/demo/compilation.gif)
+
+# Features
 * Account registration, login using Firebase as the backend
 * Searching, creating chatrooms
 * Sending disappearing text messages and images
